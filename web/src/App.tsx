@@ -20,6 +20,7 @@ import { TabBar, SideNav, type NavDef } from './components/Navigation';
 import { Toast, Confetti } from './components/Feedback';
 import { Splash } from './components/Splash';
 import { HeaderActions } from './components/HeaderActions';
+import { Credits } from './components/Credits';
 import { Home } from './screens/Home';
 import { CalendarScreen } from './screens/Calendar';
 import { MoneyScreen } from './screens/Money';
@@ -49,7 +50,7 @@ export function App({ skipSplash }: { skipSplash?: boolean }) {
       <SideNav label={t.menuAria} active={screen} onSelect={go} onAdd={() => ui.openAdd()} addLabel={t.add}
         primary={[side('home', t.home, 'home'), side('calendar', t.calendar, 'calendar'), side('money', t.money, 'money')]}
         secondary={[side('key-dates', t.keyDates, 'star'), side('wishlist', t.wishlist, 'heart'), side('goals', t.goals, 'goal'), side('settings', t.settings, 'settings')]}
-        footer={<><HeaderActions /><span className="t-micro muted" style={{ fontWeight: 400, lineHeight: 1.5 }}>{t.designCredit}</span></>} />
+        footer={<><HeaderActions /><Credits t={t} /></>} />
       <div className="shell__body">
         <div className="shell__scroll"><div className="page" key={screen}>
           {screen === 'home' && <Home go={go} />}

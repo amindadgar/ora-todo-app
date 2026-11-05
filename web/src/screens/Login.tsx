@@ -5,6 +5,7 @@ import { Logo } from '../components/Brand';
 import { Button } from '../components/Buttons';
 import { GoogleButton } from '../components/GoogleButton';
 import { HeaderActions } from '../components/HeaderActions';
+import { Credits } from '../components/Credits';
 
 /** Sign-in: Google (starts with an empty app) or the demo data (exactly as before). */
 export function Login() {
@@ -26,7 +27,7 @@ export function Login() {
         </div>
         <p className="t-caption muted">{t.localNote}</p>
       </div>
-      <p className="t-micro muted login__credit" style={{ fontWeight: 400 }}>{t.designCredit}</p>
+      <Credits t={t} className="login__credit" />
     </main>
   );
 }

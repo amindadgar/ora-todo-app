@@ -294,3 +294,8 @@ kbd{font-family:var(--font-en);font-size:var(--t-micro-size);font-weight:600;pad
 .more__scrim{flex:1;background:var(--c-bg-scrim)}
 @media (min-width:1200px){.more-root{display:none}}
 .sheet:focus{outline:none}
+
+/* credits */
+.credits{margin:0}
+.credit-link{color:inherit;text-decoration:underline;text-underline-offset:2px;border-radius:var(--radius-xs)}
+@media (hover:hover){.credit-link:hover{color:var(--c-brand-primary)}}

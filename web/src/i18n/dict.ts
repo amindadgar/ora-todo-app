@@ -65,7 +65,7 @@ export const en = {
   newIdea: 'New idea', energy: 'Medium energy',
   shortcuts: 'Keyboard shortcuts', shortcutsDesc: 'N new · Esc close · ← → days/months · T today · ? help',
   newTaskShortcut: 'New task', openMenu: 'Open menu', appName: 'Ora',
-  designCredit: 'Design: Yeganeh Akbari · Implementation: Amin Dadgar',
+  creditDesign: 'Design', creditImpl: 'Implementation', creditYeganeh: 'Yeganeh Akbari', creditAmin: 'Amin Dadgar',
   types: { task: 'Task', event: 'Event', reminder: 'Reminder', important: 'Key date', expense: 'Expense', income: 'Income', bill: 'Bills & rent', saving: 'Savings', wish: 'Love to do', goal: 'Goal' },
   groups: { plan: 'Plan', money: 'Money', forMe: 'For me' },
   examples: {
@@ -155,7 +155,7 @@ export const fa: Dict = {
   newIdea: 'ایدهٔ تازه', energy: 'انرژی متوسط',
   shortcuts: 'میان‌برهای صفحه‌کلید', shortcutsDesc: 'N تازه · Esc بستن · ← → روز/ماه · T امروز · ? راهنما',
   newTaskShortcut: 'کار تازه', openMenu: 'باز کردن منو', appName: 'Ora',
-  designCredit: 'طراحی: یگانه اکبری · پیاده‌سازی: امین دادگر',
+  creditDesign: 'طراحی', creditImpl: 'پیاده‌سازی', creditYeganeh: 'یگانه اکبری', creditAmin: 'امین دادگر',
   types: { task: 'کار', event: 'رویداد', reminder: 'یادآوری', important: 'تاریخ مهم', expense: 'هزینه', income: 'درآمد', bill: 'قسط و اجاره', saving: 'پس‌انداز', wish: 'دوست دارم', goal: 'هدف' },
   groups: { plan: 'برنامه‌ریزی', money: 'پول', forMe: 'برای خودم' },
   examples: {
