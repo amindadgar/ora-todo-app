@@ -1,0 +1,23 @@
+{
+  "name": "ora-bot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "set-webhook": "node scripts/set-webhook.mjs"
+  },
+  "dependencies": {
+    "jalaali-js": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/jalaali-js": "^1.2.0",
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2",
+    "vitest": "^2.1.9",
+    "wrangler": "^4.158.0"
+  }
+}

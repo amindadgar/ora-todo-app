@@ -19,6 +19,8 @@ npm run build && npm start
 | `SESSION_TTL_DAYS` | `30` | sliding expiry |
 | `DB_POOL_MAX` | `5` | max DB connections; keep small on tiny deployments |
 | `MAX_RECORDS_PER_USER` | `20000` | growth cap (updates to existing records are always allowed) |
+| `BOT_SHARED_SECRET` | — | ≥ 32 chars; Bearer secret for the Telegram Worker. Unset → `/bot/*` answers 503 and the app hides the Telegram button |
+| `TELEGRAM_BOT_USERNAME` | — | public bot username (no `@`), used for the `t.me/<bot>?start=<code>` deep link |
 | `AUTH_MOCK` | `false` | dev/test only: accepts `mock:<id>:<name>`; the process refuses to start with it in production |
 
 ## HTTP API
@@ -35,6 +37,11 @@ All routes are behind the gateway at `/api/...` (the gateway strips `/api`). Err
 | `DELETE /v1/account` | cookie | delete the user and all their data (204) |
 
 State-changing requests must send an `Origin` in `ALLOWED_ORIGINS` (browsers do this automatically).
+
+### Telegram endpoints
+For the signed-in user: `GET /v1/telegram` (`{enabled, linked, username}`), `POST /v1/telegram/link-code {lang, tz}` → `{url, expiresAt}` (rate limited), `DELETE /v1/telegram`.
+For the Worker (**Bearer `BOT_SHARED_SECRET`**, no cookie, no Origin check): `POST /bot/link`, `GET /bot/me`, `POST /bot/lang`, `POST /bot/unlink`, `GET /bot/records`, `POST /bot/changes` (same last-write-wins as `/v1/sync`),
+`GET /bot/due` (who should get a morning/evening message *now*, by their time zone and the synced switches), `POST /bot/ack`.
 
 ### Sync model
 A change is `{collection, id, updatedAt, deleted?, data?}`, collections: `items events wishes bills savings goals activity settings`.

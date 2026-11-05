@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "ESNext", "moduleResolution": "bundler", "strict": true, "noEmit": true, "skipLibCheck": true,
+    "lib": ["ES2022", "DOM"], "types": ["node"], "noUnusedLocals": true, "noUnusedParameters": true, "resolveJsonModule": true,
+    "paths": { "jalaali-js": ["./node_modules/@types/jalaali-js"] }
+  },
+  "include": ["src", "tests", "../web/src/lib/calendar.ts", "../web/src/lib/parser.ts", "../web/src/lib/entry.ts", "../web/src/lib/digits.ts", "../web/src/i18n/dict.ts", "../web/src/i18n/format.ts"]
+}

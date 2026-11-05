@@ -25,6 +25,7 @@ Local-first PWA with an optional account: sign in with Google and your data sync
 |---|---|---|
 | [`web/`](web/) | **web** | React + TypeScript PWA, built to static files and served by Caddy, which also reverse-proxies `/api/*` to the api service (same origin → no CORS, cookies "just work"). |
 | [`api/`](api/) | **api** | Stateless Node/Fastify service: Google sign-in, sessions, and the sync API. Only reachable through the gateway (private network). |
+| [`bot/`](bot/) | **Telegram bot** (Cloudflare Worker, not on Railway) | Webhook + cron: add entries by chatting, `/today`, morning brief and evening review. Talks to the api's `/bot/*` endpoints with a shared secret; reuses the app's parser. Free tier. See [`bot/README.md`](bot/README.md). |
 | (Railway) | **Postgres** | Managed database (Railway template) with a persistent volume. |
 
 Why this split: the frontend is static and cacheable, the API is stateless and horizontally scalable, and the database is isolated on the
@@ -38,6 +39,9 @@ private network. The api is never exposed publicly, so its attack surface is onl
 * **Sync** — every task/goal/key date/… is one record. The app works fully offline on its local copy; when online it pushes changes since the
   last sync and pulls what other devices changed (per-record **last write wins**, tombstones for deletes, a server cursor for pulls). Language and theme
   are device-local and not synced. Details: [`api/README.md`](api/README.md).
+
+### Telegram
+The bot runs as a Cloudflare Worker (free plan) so it needs no always-on process. *Settings → Connect Telegram* creates a one-time code and a `t.me` deep link; pressing Start in Telegram links the chat to the account. Setup steps are in [`bot/README.md`](bot/README.md); the api needs `BOT_SHARED_SECRET` and `TELEGRAM_BOT_USERNAME` to enable it.
 
 ### Security notes
 CSRF: state-changing requests must carry an allowed `Origin`. Rate limiting (global + stricter on sign-in). Input validated with zod, bodies ≤ 1 MB,

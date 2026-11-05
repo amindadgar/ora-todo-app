@@ -5,6 +5,7 @@ import { useNav } from '../data/nav';
 import { useAuth } from '../data/auth';
 import { initials } from '../lib/auth';
 import { useSyncStatus } from '../data/sync';
+import { TelegramRow } from '../components/TelegramRow';
 import { useI18n } from '../i18n';
 import { PageHeader } from '../components/Navigation';
 import { Segment, Toggle } from '../components/Selection';
@@ -43,6 +44,7 @@ export function SettingsScreen() {
             </div>
             <Button variant="secondary" size="sm" onClick={() => void useAuth.getState().signOut()}>{real ? t.signOut : t.signInGoogle}</Button>
           </div>
+          {real && <TelegramRow t={t} lang={s.lang} />}
           {row(t.language, <Segment label={t.language} value={s.lang} options={[['fa', t.persian], ['en', t.english]]} onChange={(v) => set({ lang: v, calMode: null })} />, 'lang')}
           {row(t.mainCalendar, <Segment label={t.mainCalendar} value={mode} options={[['j', t.jalali], ['g', t.gregorian]]} onChange={(v) => set({ calMode: v })} />, 'cal')}
           {row(t.theme, <Segment label={t.theme} value={s.theme} options={[['light', t.light], ['dark', t.dark], ['auto', t.auto]]}
