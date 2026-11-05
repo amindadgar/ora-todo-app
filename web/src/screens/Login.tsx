@@ -5,12 +5,11 @@ import { Logo } from '../components/Brand';
 import { Button } from '../components/Buttons';
 import { GoogleButton } from '../components/GoogleButton';
 import { HeaderActions } from '../components/HeaderActions';
-import type { User } from '../lib/auth';
 
 /** Sign-in: Google (starts with an empty app) or the demo data (exactly as before). */
 export function Login() {
   const { t, lang } = useI18n(); const auth = useAuth();
-  const onUser = useCallback((u: User) => { void useAuth.getState().signInGoogle(u); }, []);
+  const onCredential = useCallback((c: string) => useAuth.getState().signInWithCredential(c), []);
   void auth;
   return (
     <main className="login" aria-labelledby="login-h">
@@ -22,7 +21,7 @@ export function Login() {
           <p className="t-body muted" style={{ lineHeight: 1.7 }}>{t.loginSub}</p>
         </div>
         <div className="stack" style={{ gap: 'var(--space-12)', alignItems: 'stretch' }}>
-          <GoogleButton label={t.continueGoogle} setupHint={t.googleSetup} failedLabel={t.googleFailed} lang={lang} onUser={onUser} />
+          <GoogleButton label={t.continueGoogle} setupHint={t.googleSetup} failedLabel={t.googleFailed} lang={lang} onCredential={onCredential} />
           <Button size="lg" block onClick={() => void useAuth.getState().continueGuest()}>{t.tryDemo}</Button>
         </div>
         <p className="t-caption muted">{t.localNote}</p>

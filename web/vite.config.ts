@@ -8,6 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: { navigateFallbackDenylist: [/^\/api\//] },
       includeAssets: ['icon.svg'],
       manifest: {
         name: 'Ora', short_name: 'Ora', description: 'A calm, bilingual daily planner.',
@@ -19,6 +20,7 @@ export default defineConfig({
       }
     })
   ],
-  server: { host: true },
+  // dev: the API runs on :8080; same-origin /api like production (the Caddy gateway strips the prefix)
+  server: { host: true, proxy: { '/api': { target: 'http://127.0.0.1:8080', changeOrigin: false, rewrite: (p) => p.replace(/^\/api/, '') } } },
   test: { environment: 'jsdom', include: ['tests/**/*.test.ts'] }
 });

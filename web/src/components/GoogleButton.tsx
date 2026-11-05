@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button } from './Buttons';
-import { decodeGoogleCredential, type User } from '../lib/auth';
+import { ApiError } from '../data/api';
 
 /** Google OAuth client ID (Google Cloud Console → Credentials → OAuth client → Web). Set VITE_GOOGLE_CLIENT_ID in .env.local. */
 export const GOOGLE_CLIENT_ID = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined)?.trim() || '';
-/** Dev-only test hook: `npm run dev` + `?mockGoogle=<id>` signs in as a fake account without Google. Stripped from production builds. */
+/** Dev-only test hook: `npm run dev` + `?mockGoogle=<id>` signs in as a fake account (the API must run with AUTH_MOCK=true). Stripped from production builds. */
 const MOCK = import.meta.env.DEV ? new URLSearchParams(location.search).get('mockGoogle') : null;
 
 interface GIS { accounts: { id: { initialize: (c: { client_id: string; callback: (r: { credential: string }) => void; auto_select?: boolean }) => void; renderButton: (el: HTMLElement, o: Record<string, unknown>) => void } } }
@@ -25,21 +25,21 @@ const GMark = () => (
 );
 
 /** "Continue with Google". Uses Google's own rendered button when a client ID is configured. */
-export function GoogleButton({ label, setupHint, failedLabel, lang, onUser }: { label: string; setupHint: string; failedLabel: string; lang: string; onUser: (u: User) => void }) {
+export function GoogleButton({ label, setupHint, failedLabel, lang, onCredential }: { label: string; setupHint: string; failedLabel: string; lang: string; onCredential: (credential: string) => Promise<void> }) {
   const host = useRef<HTMLDivElement>(null); const [err, setErr] = useState<string | null>(null);
   useEffect(() => {
     if (!GOOGLE_CLIENT_ID || MOCK) return; let dead = false;
     loadGis().then(() => {
       if (dead || !host.current) return; const g = (window as unknown as { google: GIS }).google;
-      g.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: (r) => { const u = decodeGoogleCredential(r.credential, GOOGLE_CLIENT_ID); if (u) onUser(u); else setErr(failedLabel); } });
+      g.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: (r) => { setErr(null); onCredential(r.credential).catch((e) => setErr(e instanceof ApiError && e.status === 503 ? setupHint : failedLabel)); } });
       host.current.innerHTML = ''; g.accounts.id.renderButton(host.current, { type: 'standard', theme: 'outline', size: 'large', text: 'continue_with', shape: 'rectangular', width: Math.min(320, host.current.clientWidth || 320), locale: lang });
     }).catch(() => setErr(failedLabel));
     return () => { dead = true; };
-  }, [lang, onUser, failedLabel]);
+  }, [lang, onCredential, failedLabel, setupHint]);
 
   if (MOCK !== null) {
     const id = MOCK || 'mock-1';
-    return <Button variant="secondary" size="lg" block data-testid="google-mock" onClick={() => onUser({ id, name: 'Sara Test', givenName: 'Sara', email: `${id}@example.com` })}><GMark />{label}</Button>;
+    return (<div className="stack" style={{ alignItems: 'stretch' }}><Button variant="secondary" size="lg" block data-testid="google-mock" onClick={() => { setErr(null); onCredential(`mock:${id}:Sara Test`).catch(() => setErr(failedLabel)); }}><GMark />{label}</Button>{err && <span className="t-caption danger" role="alert">{err}</span>}</div>);
   }
   if (!GOOGLE_CLIENT_ID) {
     return (<div className="stack" style={{ alignItems: 'stretch' }}><Button variant="secondary" size="lg" block disabled><GMark />{label}</Button><span className="t-caption muted" role="note">{setupHint}</span></div>);

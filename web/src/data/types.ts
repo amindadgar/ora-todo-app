@@ -23,7 +23,9 @@ export interface Settings {
 export interface Activity { day: Day; b: [number, number, number, number] }
 export interface Collections { activity: Activity[]; items: Item[]; events: KeyDate[]; wishes: Wish[]; bills: Bill[]; savings: Saving[]; goals: Goal[] }
 export type CollectionKey = keyof Collections;
-export interface Persisted extends Collections { settings: Settings; version: 1; seededOn: Day }
+/** Sync bookkeeping per account: server cursor + canonical JSON of every record as last synced. */
+export interface SyncMeta { cursor: number; base: Record<string, string> }
+export interface Persisted extends Collections { settings: Settings; version: 1; seededOn: Day; sync?: SyncMeta }
 export const DEFAULT_SETTINGS: Settings = {
   lang: 'fa', theme: 'light', calMode: null, currency: 'toman', showAlt: true, morning: true, evening: true, fresh: false, tipSeen: false
 };

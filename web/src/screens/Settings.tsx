@@ -4,6 +4,7 @@ import { useUI } from '../data/ui';
 import { useNav } from '../data/nav';
 import { useAuth } from '../data/auth';
 import { initials } from '../lib/auth';
+import { useSyncStatus } from '../data/sync';
 import { useI18n } from '../i18n';
 import { PageHeader } from '../components/Navigation';
 import { Segment, Toggle } from '../components/Selection';
@@ -14,7 +15,7 @@ import { revealTheme } from '../interactions/themeReveal';
 
 export function SettingsScreen() {
   const f = useI18n(); const { t } = f; const ui = useUI(); const nav = useNav(); const mode = useCalMode();
-  const { mode: authMode, user } = useAuth(); const real = authMode === 'google';
+  const { mode: authMode, user } = useAuth(); const real = authMode === 'google'; const sync = useSyncStatus();
   const { settings: s, setSettings: set } = useData(); const file = useRef<HTMLInputElement>(null);
   const row = (label: string, ctl: React.ReactNode, key: string) => <div key={key} className="row" style={{ justifyContent: 'space-between', padding: 'var(--space-10) 0' }}><span className="t-label" style={{ fontWeight: 400 }}>{label}</span>{ctl}</div>;
   const sw = (id: string, label: string, sub: string, on: boolean, flip: () => void) => (
@@ -38,6 +39,7 @@ export function SettingsScreen() {
             <div className="row__body" style={{ minWidth: 0 }}>
               <span className="t-label" style={{ fontWeight: 600 }}>{real && user ? user.name : t.demoAccount}</span>
               <span className="t-caption muted" style={{ overflowWrap: 'anywhere' }}>{real && user ? user.email : t.demoAccountDesc}</span>
+              {real && <span className="t-caption" role="status" data-testid="sync-status" style={{ color: sync.state === 'error' ? 'var(--c-status-danger)' : 'var(--c-text-secondary)' }}>{{ idle: t.syncIdle, syncing: t.syncing, offline: t.syncOffline, error: t.syncError }[sync.state]}</span>}
             </div>
             <Button variant="secondary" size="sm" onClick={() => void useAuth.getState().signOut()}>{real ? t.signOut : t.signInGoogle}</Button>
           </div>
@@ -53,6 +55,7 @@ export function SettingsScreen() {
         </Card>
         <TextButton small style={{ alignSelf: 'flex-start' }} onClick={() => ui.setSplash(true)}>{t.replaySplash}</TextButton>
         <TextButton small style={{ alignSelf: 'flex-start', color: 'var(--c-status-danger)' }} onClick={reset}>{real ? t.clearMyData : t.resetData}</TextButton>
+        {real && <TextButton small style={{ alignSelf: 'flex-start', color: 'var(--c-status-danger)' }} onClick={() => { if (window.confirm(t.deleteConfirm)) useAuth.getState().deleteAccount().catch(() => ui.notify(t.deleteFailed)); }}>{t.deleteAccount}</TextButton>}
         <div style={{ display: 'flex', gap: 'var(--space-12)', flexWrap: 'wrap' }}>
           <TextButton small onClick={() => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([exportJson()], { type: 'application/json' })); a.download = 'ora-backup.json'; a.click(); URL.revokeObjectURL(a.href); }}>{t.exportData}</TextButton>
           <TextButton small onClick={() => file.current?.click()}>{t.importData}</TextButton>
