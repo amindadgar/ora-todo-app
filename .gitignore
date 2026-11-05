@@ -3,3 +3,9 @@ dist
 dev-dev-dist
 shots
 *.log
+web/shots
+web/dist
+api/dist
+.env
+.env.local
+*.local
