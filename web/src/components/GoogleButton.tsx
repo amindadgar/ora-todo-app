@@ -32,7 +32,7 @@ export function GoogleButton({ label, setupHint, failedLabel, lang, onCredential
     loadGis().then(() => {
       if (dead || !host.current) return; const g = (window as unknown as { google: GIS }).google;
       g.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: (r) => { setErr(null); onCredential(r.credential).catch((e) => setErr(e instanceof ApiError && e.status === 503 ? setupHint : failedLabel)); } });
-      host.current.innerHTML = ''; g.accounts.id.renderButton(host.current, { type: 'standard', theme: 'outline', size: 'large', text: 'continue_with', shape: 'rectangular', width: Math.min(320, host.current.clientWidth || 320), locale: lang });
+      host.current.innerHTML = ''; g.accounts.id.renderButton(host.current, { type: 'standard', theme: 'outline', size: 'large', text: 'continue_with', shape: 'rectangular', width: Math.min(400, Math.round(host.current.clientWidth) || 320), locale: lang });
     }).catch(() => setErr(failedLabel));
     return () => { dead = true; };
   }, [lang, onCredential, failedLabel, setupHint]);
@@ -44,5 +44,15 @@ export function GoogleButton({ label, setupHint, failedLabel, lang, onCredential
   if (!GOOGLE_CLIENT_ID) {
     return (<div className="stack" style={{ alignItems: 'stretch' }}><Button variant="secondary" size="lg" block disabled><GMark />{label}</Button><span className="t-caption muted" role="note">{setupHint}</span></div>);
   }
-  return (<div className="stack" style={{ alignItems: 'center' }}><div ref={host} className="gbtn" aria-label={label} />{err && <span className="t-caption danger" role="alert">{err}</span>}</div>);
+  // Google renders its button in a cross-origin iframe, so we can't style its text/font. Show our own button (app font, translated label)
+  // and put Google's real button on top, invisible: clicks still reach Google, so the sign-in flow is unchanged.
+  return (
+    <div className="stack" style={{ alignItems: 'stretch' }}>
+      <div className="gbtn-wrap">
+        <Button variant="secondary" size="lg" block tabIndex={-1} aria-hidden="true" style={{ pointerEvents: 'none' }}><GMark />{label}</Button>
+        <div ref={host} className="gbtn-overlay" />
+      </div>
+      {err && <span className="t-caption danger" role="alert">{err}</span>}
+    </div>
+  );
 }

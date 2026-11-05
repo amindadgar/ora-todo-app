@@ -60,7 +60,11 @@
 .login__top{display:flex;justify-content:flex-end}
 .login__card{margin:auto;width:100%;max-width:420px;display:flex;flex-direction:column;gap:var(--space-24);padding-block:var(--space-24)}
 .login__credit{text-align:center}
-.gbtn{min-height:44px;width:100%;display:flex;justify-content:center}
+.gbtn-wrap{position:relative;height:48px}
+.gbtn-wrap:focus-within{outline:2px solid var(--p-blue-300);outline-offset:2px;border-radius:var(--radius-md)}
+@media (hover:hover){.gbtn-wrap:hover .btn--secondary{background:var(--c-bg-soft)}}
+/* Google's 40px button stretched to the 48px design height; invisible but clickable */
+.gbtn-overlay{position:absolute;inset:0;opacity:.01;overflow:hidden;transform:scaleY(1.2);transform-origin:top;display:flex;justify-content:center}
 @media (min-width:768px){.login__card{padding:var(--space-40);border-radius:var(--radius-xl);background:var(--c-bg-surface);border:1px solid var(--c-border-default);box-shadow:var(--elev-1)}}
 .avatar{width:44px;height:44px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:var(--c-bg-soft);color:var(--c-text-on-soft);font-weight:700;overflow:hidden}
 .avatar img{width:100%;height:100%;object-fit:cover}
