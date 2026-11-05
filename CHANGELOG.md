@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0 — Telegram bot
+- New `bot/` Cloudflare Worker: webhook + cron. Type entries in English or Persian (same parser as the app), `/today` with ✓ buttons, `/lang`, `/stop`, Undo, morning brief (7:30) and evening review (22:00) in the user's time zone.
+- api: Telegram link codes (one-time, hashed, 10 min), `/v1/telegram` for the app, `/bot/*` for the Worker (shared-secret auth), `/bot/due` + ack scheduling; push logic shared with `/v1/sync`.
+- web: *Settings → Connect Telegram* (hidden unless the server has the bot configured); shared `buildEntry` used by the Add sheet and the bot.
+- Tests: api 47, web 46, bot 18 (real api + Postgres), plus a full-stack browser test of the linking flow.
+
 ## 0.3.0 — backend and Railway deployment
 - Monorepo: `web/` (frontend) and `api/` (backend), each with its own Dockerfile and `railway.json`.
 - **api**: Fastify + PostgreSQL. Verifies Google ID tokens server-side, opaque cookie sessions (hash stored, `HttpOnly`/`Secure`/`SameSite`, `__Host-` in production),
