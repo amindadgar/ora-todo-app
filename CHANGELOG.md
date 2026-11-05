@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0 — backend and Railway deployment
+- Monorepo: `web/` (frontend) and `api/` (backend), each with its own Dockerfile and `railway.json`.
+- **api**: Fastify + PostgreSQL. Verifies Google ID tokens server-side, opaque cookie sessions (hash stored, `HttpOnly`/`Secure`/`SameSite`, `__Host-` in production),
+  CSRF origin allow-list, rate limiting, zod validation, health/readiness endpoints, SQL migrations, account deletion.
+- **Sync**: offline-first, per-record last-write-wins with tombstones and a pull cursor; the web app diffs its local store and syncs on change, focus, reconnect and every minute.
+- **web** is now built by Docker and served by Caddy, which also proxies `/api/*` to the api over Railway's private network (one origin, strict CSP/HSTS).
+- Client no longer trusts/decodes Google tokens; sign-in goes through the api. Settings shows sync status; added *Delete my account and data*.
+- Railway project `ora`: Postgres + api + web, deployed from this branch.
+- Tests: api 29 (real Postgres), web 43, browser suites for flows, login and multi-device sync.
+
 ## 0.2.0 — login flow
 - Login screen (EN/FA, light/dark, phone → desktop): *Continue with Google* or *Try it with demo data*.
 - Google accounts start empty and are stored in their own on-device namespace; the demo data keeps its original storage and stays unchanged.
