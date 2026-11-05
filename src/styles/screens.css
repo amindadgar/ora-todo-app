@@ -1,0 +1,49 @@
+/* Screen layouts: phone = prototype (single column); tablet/desktop add columns. Tokens only. */
+.screen{padding:var(--space-20) var(--gutter) var(--space-24);display:flex;flex-direction:column;gap:var(--space-16);animation:rz-screen .28s ease-out}
+.screen--flush{padding-top:0}
+.stack{display:flex;flex-direction:column;gap:var(--space-8)}
+.splash{position:absolute;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-14);animation:rz-fade .3s ease-out;background:var(--c-splash-bg);color:var(--p-neutral-0);text-align:center}
+.tip__mouse{display:none}
+@media (hover:hover) and (min-width:1200px){.tip__touch{display:none}.tip__mouse{display:inline}}
+
+/* Home */
+.home{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "week" "tasks" "free" "mini" "rem";gap:var(--space-16);align-content:start}
+.home__head{grid-area:head}.home__week{grid-area:week}.home__tasks{grid-area:tasks;align-self:start}.home__free{grid-area:free}.home__mini{grid-area:mini;display:none}.home__rem{grid-area:rem}
+@media (min-width:768px){
+  .home{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"head head" "week week" "tasks tasks" "free rem";gap:var(--space-20)}
+  .home__week .weekday{height:72px}
+}
+@media (min-width:1200px){
+  .home{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);grid-template-areas:"head head" "week week" "tasks free" "tasks mini" "tasks rem";gap:var(--space-24)}
+  .home__mini{display:block}.home__actions{display:none!important}
+  .home__logo{display:none}
+  .home__head h1{font-size:var(--t-heading-size)}
+}
+.mini-grid .calday{height:40px}
+
+/* Calendar */
+.cal{display:flex;flex-direction:column}
+.cal__main{gap:var(--space-12)}
+.cal__grid-wrap{display:flex;flex-direction:column;gap:var(--space-6);touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.cal__agenda-in{display:flex;flex-direction:column;gap:var(--space-4);padding-top:var(--space-4);border-top:1px solid var(--c-border-default)}
+@media (min-width:768px){
+  .cal{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);grid-template-areas:"head head" "main agenda";column-gap:var(--space-32);align-items:start;padding-inline:0}
+  .cal__head{grid-area:head;padding-inline:calc(var(--gutter) - var(--space-8))}.cal__main{grid-area:main;padding-inline-end:0}.cal__agenda{grid-area:agenda;position:sticky;top:var(--space-16);padding-inline-start:0}
+  .cal__main{padding-inline-start:var(--gutter)}.cal__agenda{padding-inline-end:var(--gutter)}
+  .cal__agenda-in{border-top:none;padding:var(--space-20);border:1px solid var(--c-border-default);border-radius:var(--radius-lg);background:var(--c-bg-surface)}
+  .cal-grid--big .calday{height:64px}
+}
+@media (min-width:1200px){.cal-grid--big .calday{height:72px}.cal{column-gap:var(--space-40)}}
+
+/* Money */
+.money__grid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--space-18);align-content:start}
+.money__side{display:flex;flex-direction:column;gap:var(--space-18)}
+@media (min-width:768px){
+  .money__grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"sum sum" "bud tx" "side side";gap:var(--space-24);align-items:start}
+  .money__sum{grid-area:sum}.money__bud{grid-area:bud}.money__tx{grid-area:tx}.money__side{grid-area:side;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-24);align-items:start}
+  .money__empty{grid-column:1/-1}
+}
+@media (min-width:1200px){
+  .money__grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"sum sum sum" "bud tx side"}
+  .money__side{display:flex;flex-direction:column;gap:var(--space-24)}
+}

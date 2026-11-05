@@ -1,4 +1,4 @@
-import { primitives, semantic, extras, space, radius, typeScale, elevation, motion } from './tokens';
+import { primitives, semantic, extras, space, spaceExtra, radius, typeScale, elevation, motion } from './tokens';
 
 /** Build the global token stylesheet (CSS custom properties) from tokens.ts. */
 export function buildTokenCss(): string {
@@ -6,7 +6,7 @@ export function buildTokenCss(): string {
   const theme = (i: 0 | 1) =>
     Object.entries(semantic).map(([k, [l, d]]) => `--c-${k}:var(--p-${i === 0 ? l : d});`).join('') +
     Object.entries(extras).map(([k, v]) => `--c-${k}:${v[i]};`).join('');
-  const sp = Object.entries(space).map(([k, v]) => `--space-${k}:${v}px;`).join('');
+  const sp = Object.entries({ ...space, ...spaceExtra }).map(([k, v]) => `--space-${k}:${v}px;`).join('');
   const rd = Object.entries(radius).map(([k, v]) => `--radius-${k}:${v}px;`).join('');
   const ts = Object.entries(typeScale).map(([k, [s, w, lh, ls]]) =>
     `--t-${k}-size:${s}px;--t-${k}-weight:${w};--t-${k}-lh:${lh / 100};--t-${k}-ls:${ls}px;`).join('');

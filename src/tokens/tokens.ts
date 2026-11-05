@@ -46,6 +46,8 @@ export const extras = {
 } as const;
 
 export const space = { 2: 2, 4: 4, 8: 8, 12: 12, 16: 16, 20: 20, 24: 24, 32: 32, 40: 40 } as const;
+/** Half-steps used by the prototype that are not in the plugin's SPACE list. Named, not hidden. */
+export const spaceExtra = { 6: 6, 10: 10, 14: 14, 18: 18 } as const;
 export const radius = { xs: 4, sm: 8, md: 10, lg: 14, xl: 16, phone: 54, pill: 999 } as const;
 
 /** [name, size px, weight, line-height %, letter-spacing px] */
