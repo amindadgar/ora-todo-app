@@ -14,6 +14,8 @@ const schema = z.object({
   /** Dev/test only: accept `mock:<id>:<name>` credentials instead of real Google tokens. Refused in production. */
   AUTH_MOCK: bool.default(false),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
+  /** Max Postgres connections held by this process. Small on purpose: each idle backend costs the database ~5-10 MB. */
+  DB_POOL_MAX: z.coerce.number().int().min(1).max(50).default(5),
   /** Soft cap on stored records per user. */
   MAX_RECORDS_PER_USER: z.coerce.number().int().min(100).default(20000)
 });

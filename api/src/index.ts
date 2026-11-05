@@ -3,7 +3,7 @@ import { createPool, migrate } from './db.js';
 import { buildApp } from './app.js';
 
 const cfg = loadConfig();
-const db = createPool(cfg.DATABASE_URL);
+const db = createPool(cfg.DATABASE_URL, cfg.DB_POOL_MAX);
 const app = await buildApp({ cfg, db });
 
 const ran = await migrate(db);

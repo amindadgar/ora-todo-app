@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 export type Db = pg.Pool;
-export const createPool = (url: string) => new pg.Pool({ connectionString: url, max: 10, idleTimeoutMillis: 30_000, connectionTimeoutMillis: 5_000 });
+export const createPool = (url: string, max = 5) => new pg.Pool({ connectionString: url, max, idleTimeoutMillis: 30_000, connectionTimeoutMillis: 5_000 });
 
 const here = dirname(fileURLToPath(import.meta.url));
 /** Run pending SQL migrations in order, under an advisory lock so concurrent starts can't race. */

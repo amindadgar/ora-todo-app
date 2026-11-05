@@ -79,6 +79,10 @@ describe('config safety', () => {
     expect(() => loadConfig({ ...base, ALLOWED_ORIGINS: 'http://localhost:5173' })).toThrow(/localhost/);
     expect(loadConfig(base).ALLOWED_ORIGINS).toEqual(['https://ora.example']);
   });
+  it('keeps the connection pool small by default and validates it', () => {
+    expect(loadConfig({ DATABASE_URL: 'postgres://x' }).DB_POOL_MAX).toBe(5); expect(loadConfig({ DATABASE_URL: 'postgres://x', DB_POOL_MAX: '3' }).DB_POOL_MAX).toBe(3);
+    expect(() => loadConfig({ DATABASE_URL: 'postgres://x', DB_POOL_MAX: '0' })).toThrow();
+  });
   it('requires DATABASE_URL and ignores a mock credential when mock is off', async () => {
     expect(() => loadConfig({})).toThrow(/DATABASE_URL/);
     const off = await setup({ AUTH_MOCK: 'false' }); expect((await client(off.app).post('/auth/google', { credential: 'mock:sara' })).statusCode).toBe(503); await teardown(off); c = await setup();

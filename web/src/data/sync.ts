@@ -116,7 +116,8 @@ export function startSync(opts: { onUnauthorized: () => void }) {
   const unsub = useData.subscribe((s, p) => { if (s.hydrated && (LIST.some((c) => s[c] !== p[c]) || s.activity !== p.activity || SETTING_KEYS.some((k) => s.settings[k] !== p.settings[k]))) schedule(); });
   const vis = () => { if (document.visibilityState === 'visible') void syncNow(); };
   const online = () => void syncNow();
-  const poll = setInterval(() => void syncNow(), 60_000);
+  // minute poll, but only while the tab is visible: a forgotten background tab shouldn't keep the API and database busy
+  const poll = setInterval(() => { if (document.visibilityState === 'visible') void syncNow(); }, 60_000);
   document.addEventListener('visibilitychange', vis); window.addEventListener('online', online);
   stopFns = [unsub, () => clearTimeout(t), () => clearInterval(poll), () => document.removeEventListener('visibilitychange', vis), () => window.removeEventListener('online', online)];
   void syncNow();

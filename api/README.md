@@ -17,6 +17,7 @@ npm run build && npm start
 | `ALLOWED_ORIGINS` | `http://localhost:5173` | comma separated; CSRF allow-list. Must not contain localhost in production |
 | `GOOGLE_CLIENT_ID` | — | audience of Google ID tokens; without it `POST /auth/google` → 503 |
 | `SESSION_TTL_DAYS` | `30` | sliding expiry |
+| `DB_POOL_MAX` | `5` | max DB connections; keep small on tiny deployments |
 | `MAX_RECORDS_PER_USER` | `20000` | growth cap (updates to existing records are always allowed) |
 | `AUTH_MOCK` | `false` | dev/test only: accepts `mock:<id>:<name>`; the process refuses to start with it in production |
 
