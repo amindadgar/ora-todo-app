@@ -79,6 +79,25 @@ One Railway project with three services, all in the same environment:
 Only **web** gets a public domain. Each service builds from its own `Dockerfile` and has a `railway.json` (health checks: api `/healthz`, web `/`).
 Push to the connected branch and Railway redeploys. `/readyz` on the api checks the database.
 
+### Keeping it cheap (3–4 users)
+The stack is tuned to idle at roughly **150–170 MB RAM and ~0 CPU** in total (measured on Railway: Postgres ≈ 105 MB, web ≈ 28 MB, api ≈ 26 MB).
+Railway bills memory/CPU by actual use plus the volume, so the expected bill is only a few dollars a month (≈ $2–3 at current Railway rates — check
+the Usage page for your real number).
+
+| Setting | Value | Why |
+|---|---|---|
+| Memory / CPU limits | api 0.25 GB · 0.5 vCPU, web 0.15 GB · 0.25 vCPU, Postgres 0.5 GB · 0.5 vCPU | safety caps: a bug or traffic spike can't run up the bill |
+| `DB_POOL_MAX` (api) | `3` | fewer idle connections → less memory in Postgres too |
+| `NODE_OPTIONS` (api) | `--max-old-space-size=96` | keeps Node's heap small |
+| `LOG_LEVEL` (api) | `warn` | much less log volume |
+| Replicas / regions | 1 / one region | no HA — fine for a personal app |
+| Watch paths | `/api/**`, `/web/**` | a change in one folder doesn't rebuild the other service |
+| Client polling | only while the tab is visible | background tabs don't keep the api and database busy |
+
+Not enabled on purpose: **Serverless/app sleeping** (it would save well under a dollar but adds cold starts, and a sleeping private-network api
+may not wake reliably behind the gateway), and **PR deploys**. The 5 GB Postgres volume is Railway's default size. As a last line of defence, set a
+**usage limit** in the Railway dashboard (*Workspace → Usage → hard limit*, e.g. $5) so spending can never exceed what you choose.
+
 ### Google sign-in
 1. Google Cloud Console → *APIs & Services → Credentials → OAuth client ID → Web application*.
 2. *Authorized JavaScript origins*: your web domain (and `http://localhost:5173` for development).
