@@ -1,0 +1,33 @@
+import { useCallback } from 'react';
+import { useAuth } from '../data/auth';
+import { useI18n } from '../i18n';
+import { Logo } from '../components/Brand';
+import { Button } from '../components/Buttons';
+import { GoogleButton } from '../components/GoogleButton';
+import { HeaderActions } from '../components/HeaderActions';
+import type { User } from '../lib/auth';
+
+/** Sign-in: Google (starts with an empty app) or the demo data (exactly as before). */
+export function Login() {
+  const { t, lang } = useI18n(); const auth = useAuth();
+  const onUser = useCallback((u: User) => { void useAuth.getState().signInGoogle(u); }, []);
+  void auth;
+  return (
+    <main className="login" aria-labelledby="login-h">
+      <div className="login__top"><HeaderActions /></div>
+      <div className="login__card">
+        <div style={{ color: 'var(--c-brand-primary)' }}><Logo size={56} /></div>
+        <div className="stack" style={{ gap: 'var(--space-8)' }}>
+          <h1 id="login-h" className="t-title">{t.loginTitle}</h1>
+          <p className="t-body muted" style={{ lineHeight: 1.7 }}>{t.loginSub}</p>
+        </div>
+        <div className="stack" style={{ gap: 'var(--space-12)', alignItems: 'stretch' }}>
+          <GoogleButton label={t.continueGoogle} setupHint={t.googleSetup} failedLabel={t.googleFailed} lang={lang} onUser={onUser} />
+          <Button size="lg" block onClick={() => void useAuth.getState().continueGuest()}>{t.tryDemo}</Button>
+        </div>
+        <p className="t-caption muted">{t.localNote}</p>
+      </div>
+      <p className="t-micro muted login__credit" style={{ fontWeight: 400 }}>{t.designCredit}</p>
+    </main>
+  );
+}

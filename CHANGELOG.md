@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0 — login flow
+- Login screen (EN/FA, light/dark, phone → desktop): *Continue with Google* or *Try it with demo data*.
+- Google accounts start empty and are stored in their own on-device namespace; the demo data keeps its original storage and stays unchanged.
+- Greeting uses the Google account's first name; demo-only items (year-in-review card, "preview as new user", restore samples) are hidden for real accounts — *Clear my data* empties instead of restoring samples.
+- Settings → Account: avatar, name, email, Sign out / Sign in with Google.
+- Google Identity Services button when `VITE_GOOGLE_CLIENT_ID` is set; setup hint otherwise. Dev-only `?mockGoogle=<id>` test hook.
+- Tests: 44 unit tests (incl. token decoding/validation) + login end-to-end script.
+
 ## 0.1.0 — first complete build
 - Project: Vite + React + TypeScript PWA (installable, offline shell), self-hosted Figtree + Vazirmatn.
 - Tokens transcribed from the Ora Design System v2.3 plugin (light + dark), type scale, spacing, radius, elevation, icons.

@@ -7,6 +7,7 @@ import './styles/global.css';
 import './styles/screens.css';
 import { App } from './App';
 import { useData } from './data/store';
+import { useAuth } from './data/auth';
 import { setToday, dayFromG } from './lib/calendar';
 
 // tokens → CSS custom properties (single source: tokens.ts)
@@ -15,7 +16,8 @@ const style = document.createElement('style'); style.id = 'ora-tokens'; style.te
 // test/screenshot hook: ?today=2026-10-06&lang=fa&theme=dark&splash=0
 const q = new URLSearchParams(location.search);
 const td = q.get('today'); if (td) { const [y, m, d] = td.split('-').map(Number); setToday(dayFromG(y, m, d)); }
-void useData.getState().hydrate().then(() => {
+void useAuth.getState().boot().then(async () => {
+  if (q.has('guest') && !useAuth.getState().mode) await useAuth.getState().continueGuest();   // test hook
   const s = useData.getState();
   const patch: Record<string, unknown> = {}; if (q.get('lang')) patch.lang = q.get('lang'); if (q.get('theme')) patch.theme = q.get('theme');
   if (Object.keys(patch).length) s.setSettings(patch);

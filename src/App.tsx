@@ -4,6 +4,8 @@ import { useData } from './data/store';
 import { useUI, type Screen } from './data/ui';
 import { useRoute } from './data/route';
 import { NavCtx } from './data/nav';
+import { useAuth } from './data/auth';
+import { Login } from './screens/Login';
 import { useShortcuts } from './interactions/useShortcuts';
 import { MoreMenu } from './components/MoreMenu';
 import { HelpDialog } from './components/HelpDialog';
@@ -39,6 +41,8 @@ export function App({ skipSplash }: { skipSplash?: boolean }) {
   const select = (id: NavDef['id']) => { if (id === 'more') ui.setMore(!ui.moreOpen); else if (id === 'add') ui.openAdd(); else { ui.setMore(false); go(id); } };
   const side = (id: Screen, label: string, icon: NavDef['icon'] | 'star' | 'heart' | 'goal' | 'settings', kbd?: string) => ({ id, label, icon: icon as never, kbd });
   void settings;
+  const mode = useAuth((a) => a.mode);
+  if (mode === null) return (<>{<Login />}{ui.splash && <Splash tagline={t.tagline} label={t.skipSplash} onDone={() => ui.setSplash(false)} />}</>);
   return (
     <NavCtx.Provider value={{ screen, go, back }}>
     <div className="shell">

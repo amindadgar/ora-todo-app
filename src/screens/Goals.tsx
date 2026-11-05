@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useData } from '../data/store';
 import { useUI } from '../data/ui';
 import { useNav } from '../data/nav';
+import { useAuth } from '../data/auth';
 import { useI18n } from '../i18n';
 import { today } from '../lib/calendar';
 import { buildReport, type Range } from '../lib/report';
@@ -17,7 +18,7 @@ import { usePlus } from './Money';
 import { useCalMode } from './Home';
 
 export function GoalsScreen() {
-  const f = useI18n(); const { t, N, text } = f; const ui = useUI(); const nav = useNav(); const mode = useCalMode(); const T = today();
+  const f = useI18n(); const { t, N, text } = f; const ui = useUI(); const nav = useNav(); const mode = useCalMode(); const T = today(); const auth = useAuth((a) => a.mode);
   const { goals, activity, settings, items } = useData(); const [range, setRange] = useState<Range>('week');
   const cu = useCountUp('goals|' + range); const plus = usePlus();
   const rep = buildReport(range, activity, T, mode); const max = Math.max(1, ...rep.bars.map((b) => b.value));
@@ -58,7 +59,7 @@ export function GoalsScreen() {
               <span className="t-caption muted">{note}</span>
             </div>
           </section>
-          {!settings.fresh && <ReviewCard title={t.yearTitle} line={t.yearLine} stats={t.yearStats} />}
+          {auth === 'guest' && !settings.fresh && <ReviewCard title={t.yearTitle} line={t.yearLine} stats={t.yearStats} />}
         </div>
       </div>
     </main>

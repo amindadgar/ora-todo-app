@@ -14,9 +14,9 @@ const H = { 390: 844, 834: 1112, 1440: 900 };
     const page = await ctx.newPage(); const errs = [];
     page.on('pageerror', (e) => errs.push(String(e))); page.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
     for (const s of screens) {
-      await page.goto(`http://localhost:5173/?today=2026-10-06&splash=0&lang=${lang}&theme=${theme}#/${s}`);
+      await page.goto(`http://localhost:5173/?today=2026-10-06&splash=0&guest=1&lang=${lang}&theme=${theme}#/${s}`);
       await page.evaluate(() => { localStorage.clear(); indexedDB.deleteDatabase('ora'); });
-      await page.goto(`http://localhost:5173/?today=2026-10-06&splash=0&lang=${lang}&theme=${theme}#/${s}`);
+      await page.goto(`http://localhost:5173/?today=2026-10-06&splash=0&guest=1&lang=${lang}&theme=${theme}#/${s}`);
       await page.waitForTimeout(700);
       await page.screenshot({ path: `${out}/${lang}-${theme}-${s}-${w}.png`, fullPage: w >= 768 });
     }

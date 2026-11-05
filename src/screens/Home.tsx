@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useData } from '../data/store';
 import { useUI } from '../data/ui';
 import { useCal } from '../data/calState';
+import { useAuth } from '../data/auth';
 import { useI18n } from '../i18n';
 import { today, weekStart, weekdayIndex, toJ, toG, monthOffset, monthAt, isFriday, type CalMode } from '../lib/calendar';
 import { nextFreeSlot, toHM } from '../lib/suggest';
@@ -23,7 +24,7 @@ export function useCalMode(): CalMode { const m = useData((s) => s.settings.calM
 export function Home({ go }: { go: (s: 'calendar' | 'wishlist') => void }) {
   const f = useI18n(); const { t, N, L, text, SEP } = f;
   const { items, events, bills, wishes, settings } = useData();
-  const ui = useUI(); const cal = useCal(); const mode = useCalMode();
+  const ui = useUI(); const cal = useCal(); const mode = useCalMode(); const user = useAuth((a) => a.user);
   const T = today();
   const [pend, setPend] = useState<string | null>(null); const [sugIdx, setSugIdx] = useState(0);
 
@@ -78,7 +79,7 @@ export function Home({ go }: { go: (s: 'calendar' | 'wishlist') => void }) {
       <div className="home__head app-head">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
           <div style={{ alignSelf: 'flex-start', marginBottom: 'var(--space-8)' }} className="home__logo"><Logo /></div>
-          <h1 className="t-subheading" style={{ fontWeight: 600, lineHeight: 1.5 }}>{t.hello}</h1>
+          <h1 className="t-subheading" style={{ fontWeight: 600, lineHeight: 1.5 }}>{user ? t.helloName(user.givenName) : t.hello}</h1>
           <span className="t-small muted">{todayLine}</span>
         </div>
         <HeaderActions className="home__actions" />

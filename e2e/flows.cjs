@@ -4,7 +4,7 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fails++
 (async () => {
   const browser = await chromium.launch();
   const mk = async (w, h, touch) => { const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: !!touch, reducedMotion: 'reduce' }); const p = await ctx.newPage(); p.on('pageerror', (e) => { console.log('PAGEERROR', e); fails++; });
-    await p.goto('http://localhost:5173/?today=2026-10-06&splash=0&lang=en&theme=light'); await p.evaluate(() => { localStorage.clear(); indexedDB.deleteDatabase('ora'); }); await p.goto('http://localhost:5173/?today=2026-10-06&splash=0&lang=en&theme=light'); await p.waitForTimeout(400); return p; };
+    await p.goto('http://localhost:5173/?today=2026-10-06&splash=0&guest=1&lang=en&theme=light'); await p.evaluate(() => { localStorage.clear(); indexedDB.deleteDatabase('ora'); }); await p.goto('http://localhost:5173/?today=2026-10-06&splash=0&guest=1&lang=en&theme=light'); await p.waitForTimeout(400); return p; };
 
   // ---------- desktop ----------
   let p = await mk(1440, 900);

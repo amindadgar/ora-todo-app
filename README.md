@@ -31,7 +31,30 @@ npm test           # unit tests (parser, calendar, reports, free-time)
 
 ### Useful URL parameters (testing / screenshots)
 
-`?today=2026-10-06` fixes "today" · `&lang=fa|en` · `&theme=light|dark|auto` · `&splash=0` skips the welcome screen.
+`?guest=1` skips the login (demo data) · `?today=2026-10-06` fixes "today" · `&lang=fa|en` · `&theme=light|dark|auto` · `&splash=0` skips the welcome screen.
+
+## Sign-in and accounts
+
+On first launch Ora shows a login screen:
+
+* **Try it with demo data** — exactly the sample data from the design (tasks, money, goals…).
+* **Continue with Google** — a real account that starts **empty** (no demo data at all). Greeting uses the account's first name.
+
+Each account has its own storage on the device (IndexedDB namespace), so switching accounts never mixes data, and signing out keeps
+everything for next time. Settings → *Account* shows who is signed in and has *Sign out* / *Sign in with Google*.
+
+**Enabling Google sign-in** (needs a Google OAuth client ID; I can't create one for you):
+
+1. Google Cloud Console → *APIs & Services → Credentials → Create credentials → OAuth client ID → Web application*.
+2. Add your origins (e.g. `http://localhost:5173` and your production URL) to *Authorized JavaScript origins*.
+3. `cp .env.example .env.local`, set `VITE_GOOGLE_CLIENT_ID=<your id>.apps.googleusercontent.com`, restart `npm run dev`.
+
+Without a client ID the Google button shows a setup hint and the demo path keeps working.
+
+> **Security note.** Ora is local-first with no backend, so the Google ID token is only read in the browser to get the name/email/photo and to
+> label the local data namespace; its signature is *not* verified (the audience, issuer and expiry are checked). Accounts are therefore not a security
+> boundary against someone using the same browser profile, and data is **not synced** between devices. If you add a server later, verify the
+> token there. For tests, `npm run dev` supports `?mockGoogle=<id>` to sign in as a fake account (removed from production builds).
 
 ## Responsive behaviour
 
@@ -74,6 +97,7 @@ tests/  e2e/  scripts/ (screenshot harness)  docs/ (layout + fidelity comparison
 ## Checks
 
 * `npm test` — parser (EN + FA, Persian digits, relative dates, times, amounts), calendar/Jalali maths, report buckets, free-time logic.
+* `node e2e/login.cjs` (dev server running) — login screen, demo vs Google (empty), account isolation, sign-out, clear data, reload persistence, Persian/phone layout.
 * `node e2e/flows.cjs` (dev server running) — add/undo, menus, right-click, keyboard, wheel, language switch + RTL, persistence,
   swipe, long-press, sheet drag.
 * `node scripts/shots.cjs <dir>` and `node scripts/shots-states.cjs <dir>` — screenshots at 390 / 834 / 1440 px.
