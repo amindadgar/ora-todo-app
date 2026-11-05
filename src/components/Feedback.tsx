@@ -18,14 +18,16 @@ const FOCUSABLE = 'button:not([disabled]),input,[href],[tabindex]:not([tabindex=
  * Esc closes, focus is trapped and restored.
  */
 export function Sheet({ title, titleId, closeLabel, onClose, children, footer, initialFocus }: { title: string; titleId: string; closeLabel: string; onClose: () => void; children: ReactNode; footer?: ReactNode; initialFocus?: string }) {
-  const drag = useSheetDrag(onClose); const ref = useRef<HTMLElement>(null);
+  const drag = useSheetDrag(onClose); const ref = useRef<HTMLElement>(null); const onCloseRef = useRef(onClose); onCloseRef.current = onClose;
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
-    const t = setTimeout(() => { (initialFocus ? ref.current?.querySelector<HTMLElement>(initialFocus) : null)?.focus(); }, 60);
-    return () => { clearTimeout(t); prev?.focus?.(); };
+    const t = setTimeout(() => { const el = initialFocus ? ref.current?.querySelector<HTMLElement>(initialFocus) : null; (el ?? ref.current)?.focus(); }, 60);
+    // Esc closes the dialog no matter where focus is (menus inside handle their own Esc first)
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape' && !document.querySelector('[role=menu]')) onCloseRef.current(); };
+    document.addEventListener('keydown', esc);
+    return () => { clearTimeout(t); document.removeEventListener('keydown', esc); prev?.focus?.(); };
   }, [initialFocus]);
   const onKey = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') { e.stopPropagation(); onClose(); return; }
     if (e.key === 'Tab') {
       const f = [...(ref.current?.querySelectorAll<HTMLElement>(FOCUSABLE) || [])].filter((x) => x.offsetParent !== null);
       if (!f.length) return; const first = f[0], last = f[f.length - 1];
@@ -36,7 +38,7 @@ export function Sheet({ title, titleId, closeLabel, onClose, children, footer, i
   return (
     <div className="sheet-root" style={{ ['--dim' as string]: drag.dim }}>
       <div className="sheet-backdrop" onClick={onClose} style={{ transition: drag.transition }} />
-      <section ref={ref} role="dialog" aria-modal="true" aria-labelledby={titleId} className="sheet" onKeyDown={onKey}
+      <section ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby={titleId} className="sheet" onKeyDown={onKey}
         style={{ transform: `translateY(${drag.y}px)`, transition: drag.transition }}>
         <div className="sheet__grab" {...drag.bind}><span /></div>
         <div className="sheet__head"><h2 id={titleId} className="t-subheading">{title}</h2><IconButton icon="close" kind="muted" label={closeLabel} onClick={onClose} style={{ border: 'none', background: 'transparent' }} /></div>

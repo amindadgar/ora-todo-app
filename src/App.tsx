@@ -1,7 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useData } from './data/store';
 import { useUI, type Screen } from './data/ui';
 import { useRoute } from './data/route';
+import { NavCtx } from './data/nav';
+import { useShortcuts } from './interactions/useShortcuts';
+import { MoreMenu } from './components/MoreMenu';
+import { HelpDialog } from './components/HelpDialog';
+import { AddSheet } from './screens/AddSheet';
+import { EditSheet } from './screens/EditSheet';
+import { KeyDatesScreen } from './screens/KeyDates';
+import { WishlistScreen } from './screens/Wishlist';
+import { GoalsScreen } from './screens/Goals';
+import { SettingsScreen } from './screens/Settings';
 import { useI18n, useDocumentSettings } from './i18n';
 import { TabBar, SideNav, type NavDef } from './components/Navigation';
 import { Toast, Confetti } from './components/Feedback';
@@ -13,10 +23,9 @@ import { MoneyScreen } from './screens/Money';
 
 export function App({ skipSplash }: { skipSplash?: boolean }) {
   useDocumentSettings();
-  const f = useI18n(); const { t } = f; const ui = useUI(); const [screen, go] = useRoute();
+  const f = useI18n(); const { t } = f; const ui = useUI(); const [screen, go, back] = useRoute(); useShortcuts(go);
   const settings = useData((s) => s.settings);
   useEffect(() => { if (skipSplash) ui.setSplash(false); }, [skipSplash]);   // eslint-disable-line react-hooks/exhaustive-deps
-  const [bumped] = useState<string | null>(null);
 
   const tabs: NavDef[] = [
     { id: 'home', label: t.home, icon: 'home' }, { id: 'calendar', label: t.calendar, icon: 'calendar' }, { id: 'add', label: t.add, icon: 'add' },
@@ -27,6 +36,7 @@ export function App({ skipSplash }: { skipSplash?: boolean }) {
   const side = (id: Screen, label: string, icon: NavDef['icon'] | 'star' | 'heart' | 'goal' | 'settings', kbd?: string) => ({ id, label, icon: icon as never, kbd });
   void settings;
   return (
+    <NavCtx.Provider value={{ screen, go, back }}>
     <div className="shell">
       <SideNav label={t.menuAria} active={screen} onSelect={go} onAdd={() => ui.openAdd()} addLabel={t.add}
         primary={[side('home', t.home, 'home'), side('calendar', t.calendar, 'calendar'), side('money', t.money, 'money')]}
@@ -37,13 +47,26 @@ export function App({ skipSplash }: { skipSplash?: boolean }) {
           {screen === 'home' && <Home go={go} />}
           {screen === 'calendar' && <CalendarScreen />}
           {screen === 'money' && <MoneyScreen />}
-          {!['home', 'calendar', 'money'].includes(screen) && <p className="screen muted">…</p>}
+          {screen === 'key-dates' && <KeyDatesScreen />}
+          {screen === 'wishlist' && <WishlistScreen />}
+          {screen === 'goals' && <GoalsScreen />}
+          {screen === 'settings' && <SettingsScreen />}
         </div></div>
-        <TabBar label={t.menuAria} items={tabs} active={active} bumped={bumped} onSelect={select} />
+        <TabBar label={t.menuAria} items={tabs} active={active} bumped={ui.bump} onSelect={select} />
       </div>
       {ui.toast && <Toast msg={ui.toast.msg} undoLabel={t.undo} viewLabel={t.view} onUndo={ui.toast.undo ? ui.doUndo : undefined} onView={ui.toast.view ? () => { go(ui.toast!.view!); ui.dismissToast(); } : undefined} />}
       {ui.celebrate && <Confetti />}
+      {ui.moreOpen && <MoreMenu title={t.moreTitle} closeLabel={t.close} onClose={() => ui.setMore(false)} items={[
+        { label: t.keyDates, desc: t.keyDatesDesc, icon: 'star', go: () => { ui.setMore(false); go('key-dates'); } }, { label: t.wishlist, desc: t.wishlistDesc, icon: 'heart', go: () => { ui.setMore(false); go('wishlist'); } },
+        { label: t.goals, desc: t.goalsDesc, icon: 'goal', go: () => { ui.setMore(false); go('goals'); } }, { label: t.settings, desc: t.settingsDesc, icon: 'settings', go: () => { ui.setMore(false); go('settings'); } }]} />}
+      {ui.addOpen && <AddSheet preset={ui.addOpen} screen={screen} />}
+      {ui.edit && <EditSheet kind={ui.edit.kind} id={ui.edit.id} />}
+      {ui.help && <HelpDialog t={t} onClose={() => ui.setHelp(false)} />}
+      {ui.fly && <div className="fly" aria-hidden="true" style={{ left: ui.fly.x, top: ui.fly.y, transform: `translateX(${ui.fly.go ? ui.fly.x1 - ui.fly.x : 0}px)`, transition: ui.fly.go ? 'transform .58s cubic-bezier(.3,.1,.5,1)' : 'none' }}>
+        <span className="fly__dot" style={{ transform: `translateY(${ui.fly.go ? ui.fly.y1 - ui.fly.y : 0}px) scale(${ui.fly.go ? 0.6 : 1})`, transition: ui.fly.go ? 'transform .58s cubic-bezier(.6,-.35,.8,.6)' : 'none' }} />
+      </div>}
       {ui.splash && <Splash tagline={t.tagline} label={t.skipSplash} onDone={() => ui.setSplash(false)} />}
     </div>
+    </NavCtx.Provider>
   );
 }

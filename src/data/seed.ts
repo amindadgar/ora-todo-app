@@ -1,12 +1,24 @@
 import { Day, toJ, dayFromJ } from '../lib/calendar';
-import type { Collections } from './types';
+import type { Collections, Activity } from './types';
 
 /** Sample data (same content as the prototype), generated relative to `today`. */
+/** ~14 months of plausible, deterministic sample completion history (so charts have something to show). */
+export function makeActivity(today: Day): Activity[] {
+  const out: Activity[] = [];
+  for (let i = 1; i <= 430; i++) {
+    const r = (i * 2654435761) % 1000 / 1000;           // deterministic pseudo-random
+    const n = Math.round(3 + r * 7);                       // 3..10 tasks
+    const a = Math.round(n * 0.35), nn = Math.round(n * 0.2), e = Math.round(n * 0.3);
+    out.push({ day: today - i, b: [a, nn, e, Math.max(0, n - a - nn - e)] });
+  }
+  return out;
+}
 export function makeSeed(today: Day): Collections {
   const tj = toJ(today), monthStart = dayFromJ(tj.jy, tj.jm, 1), sinceStart = today - monthStart;
   // money samples live inside the current Jalali month so Money is never empty
   const at = (k: number) => monthStart + Math.min(sinceStart, k);
   return {
+    activity: makeActivity(today),
     items: [
       { id: 'a', type: 'task', title: { fa: 'آماده‌کردن ارائهٔ پنجشنبه', en: 'Prep Thursday’s presentation' }, day: today, time: '14:00', urgent: true },
       { id: 'b', type: 'task', title: { fa: 'خواندن ۲۰ صفحه کتاب', en: 'Read 20 pages' }, day: today, time: '21:00' },
@@ -61,4 +73,4 @@ export function makeSeed(today: Day): Collections {
     ]
   };
 }
-export const emptyCollections = (): Collections => ({ items: [], events: [], wishes: [], bills: [], savings: [], goals: [] });
+export const emptyCollections = (): Collections => ({ activity: [], items: [], events: [], wishes: [], bills: [], savings: [], goals: [] });

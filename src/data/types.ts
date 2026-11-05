@@ -5,7 +5,7 @@ import type { EntryType } from '../lib/parser';
 export type CatId = 'food' | 'transport' | 'fun' | 'bills' | 'home' | 'other';
 export interface Item {
   id: string; type: Extract<EntryType, 'task' | 'event' | 'reminder' | 'expense' | 'income'>;
-  title: LText; day: Day; time: string; urgent?: boolean; done?: boolean; doneAt?: Day; amount?: number; cat?: CatId;
+  title: LText; day: Day; time: string; urgent?: boolean; done?: boolean; doneAt?: Day; doneB?: number; amount?: number; cat?: CatId;
 }
 export interface KeyDate { id: string; title: LText; day: Day; yearly: boolean }
 export interface Wish { id: string; title: LText; meta: LText }
@@ -19,7 +19,9 @@ export interface Settings {
   lang: Lang; theme: Theme; calMode: CalMode | null; currency: Currency; showAlt: boolean;
   morning: boolean; evening: boolean; fresh: boolean; tipSeen: boolean;
 }
-export interface Collections { items: Item[]; events: KeyDate[]; wishes: Wish[]; bills: Bill[]; savings: Saving[]; goals: Goal[] }
+/** Tasks completed on a day, bucketed by time of day [morning, noon, evening, night]. Feeds the Goals charts. */
+export interface Activity { day: Day; b: [number, number, number, number] }
+export interface Collections { activity: Activity[]; items: Item[]; events: KeyDate[]; wishes: Wish[]; bills: Bill[]; savings: Saving[]; goals: Goal[] }
 export type CollectionKey = keyof Collections;
 export interface Persisted extends Collections { settings: Settings; version: 1; seededOn: Day }
 export const DEFAULT_SETTINGS: Settings = {

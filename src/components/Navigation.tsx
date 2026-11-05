@@ -54,7 +54,7 @@ export function SideNav({ primary, secondary, active, onSelect, onAdd, addLabel,
 export function PageHeader({ title, onBack, backLabel }: { title: string; onBack?: () => void; backLabel?: string }) {
   return (
     <header className="page-head">
-      {onBack && <IconButton icon="chevron-left" kind="plain" size={22} label={backLabel || ''} onClick={onBack} style={{ border: 'none', background: 'transparent' }} />}
+      {onBack && <IconButton icon="chevron-left" kind="plain" size={22} label={backLabel || ''} onClick={onBack} className="page-head__back" style={{ border: 'none', background: 'transparent' }} />}
       <h1 className="t-heading">{title}</h1>
     </header>
   );

@@ -30,6 +30,7 @@ export const en = {
   emptyGoals: 'No goals yet. Try “read 20 books”.', addGoal: '+ New goal', tasksCompleted: 'Tasks completed',
   transactions: 'This month’s transactions', tagline: 'Your day, right now', skipSplash: 'Enter the app', replaySplash: 'Show the welcome screen again',
   resetData: 'Clear my data and restore samples',
+  exportData: 'Export a backup (JSON)', importData: 'Import a backup', importFailed: 'That file is not an Ora backup', imported: 'Backup imported',
   holidayNote: 'Fixed solar holidays are exact; religious holidays for 1405–1406 are computed from the lunar calendar and may differ by a day from the official announcement.',
   yearTitle: 'Your 1404 in review', yearLine: 'What a year, Amin.', yearStats: '1,248 tasks done · 18 books · 86 workouts · longest streak: 47 days',
   wishIntro: 'Things you’d love to do on a free day.', wishEmpty: 'Nothing here yet. Whenever you think of something you’d love to do someday, add it here.',
@@ -70,7 +71,7 @@ export const en = {
   jMonths: ['Farvardin', 'Ordibehesht', 'Khordad', 'Tir', 'Mordad', 'Shahrivar', 'Mehr', 'Aban', 'Azar', 'Dey', 'Bahman', 'Esfand'],
   gMonths: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
   goalTabs: { day: 'Day', week: 'Week', month: 'Month', year: 'Year' },
-  chart: { am: 'AM', noon: 'Noon', pm: 'PM', night: 'Night', w: 'W', best: 'Best day this week: Sunday.', better: '12% better than last month.', empty: 'No data yet — it fills up as you tick off tasks.', tasksSoFar: (n: number | string) => `${n} tasks so far in 1405.`, todayDone: (a: number | string, b: number | string) => `${a} of ${b} tasks done today.` },
+  chart: { am: 'AM', noon: 'Noon', pm: 'PM', night: 'Night', w: 'W', best: (d: string) => `Best day this week: ${d}.`, better: (p: string) => `${p} better than last month.`, worse: (p: string) => `${p} fewer than last month.`, empty: 'No data yet — it fills up as you tick off tasks.', tasksSoFar: (n: number | string) => `${n} tasks so far in 1405.`, todayDone: (a: number | string, b: number | string) => `${a} of ${b} tasks done today.` },
   holidays: {
     nowruz: 'Nowruz', republic: 'Islamic Republic Day', nature: 'Nature Day', khomeini: 'Khomeini anniversary', khordad15: '15 Khordad uprising', revolution: 'Revolution Day', oil: 'Oil Nationalization Day',
     fitrHoliday: 'Eid al-Fitr holiday', sadiq: 'Martyrdom of Imam Sadiq', adha: 'Eid al-Adha', ghadir: 'Eid al-Ghadir', tasua: 'Tasua', ashura: 'Ashura', arbaeen: 'Arbaeen',
@@ -109,6 +110,7 @@ export const fa: Dict = {
   emptyGoals: 'هنوز هدفی نذاشتی. مثلاً بنویس «خواندن ۲۰ کتاب».', addGoal: '+ هدف تازه', tasksCompleted: 'کارهای انجام‌شده',
   transactions: 'تراکنش‌های این ماه', tagline: 'برنامهٔ امروزت، همین الان', skipSplash: 'ورود به برنامه', replaySplash: 'نمایش دوبارهٔ صفحهٔ شروع',
   resetData: 'پاک کردن داده‌ها و برگشت به نمونه‌ها',
+  exportData: 'گرفتن نسخهٔ پشتیبان (JSON)', importData: 'بازیابی از نسخهٔ پشتیبان', importFailed: 'این فایل نسخهٔ پشتیبان Ora نیست', imported: 'نسخهٔ پشتیبان بازیابی شد',
   holidayNote: 'تعطیلی‌های رسمی شمسی ثابت‌اند؛ تعطیلی‌های مذهبی برای ۱۴۰۵ و ۱۴۰۶ از تقویم قمری محاسبه شده‌اند و ممکن است یک روز با اعلام رسمی فرق کنند.',
   yearTitle: 'مرور سال ۱۴۰۴', yearLine: 'سال خوبی بود، امین.', yearStats: '۱٬۲۴۸ کار انجام‌شده، ۱۸ کتاب، ۸۶ جلسه ورزش، طولانی‌ترین زنجیره: ۴۷ روز',
   wishIntro: 'کارهایی که دوست داری یه روز آزاد انجام بدی.', wishEmpty: 'هنوز چیزی اینجا نیست. هر وقت یاد کاری افتادی که دوست داری یه روز انجامش بدی، اینجا بنویسش.',
@@ -149,7 +151,7 @@ export const fa: Dict = {
   jMonths: ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
   gMonths: ['ژانویه', 'فوریه', 'مارس', 'آوریل', 'مه', 'ژوئن', 'ژوئیه', 'اوت', 'سپتامبر', 'اکتبر', 'نوامبر', 'دسامبر'],
   goalTabs: { day: 'روز', week: 'هفته', month: 'ماه', year: 'سال' },
-  chart: { am: 'صبح', noon: 'ظهر', pm: 'عصر', night: 'شب', w: 'هفتهٔ ', best: 'بهترین روز این هفته: یکشنبه.', better: '۱۲٪ بهتر از ماه قبل.', empty: 'هنوز داده‌ای نیست؛ با تیک زدن کارها اینجا پر می‌شه.', tasksSoFar: (n: number | string) => `${n} کار تا امروز در ۱۴۰۵.`, todayDone: (a: number | string, b: number | string) => `امروز ${a} از ${b} کار انجام شد.` },
+  chart: { am: 'صبح', noon: 'ظهر', pm: 'عصر', night: 'شب', w: 'هفتهٔ ', best: (d: string) => `بهترین روز این هفته: ${d}.`, better: (p: string) => `${p} بهتر از ماه قبل.`, worse: (p: string) => `${p} کمتر از ماه قبل.`, empty: 'هنوز داده‌ای نیست؛ با تیک زدن کارها اینجا پر می‌شه.', tasksSoFar: (n: number | string) => `${n} کار تا امروز در ۱۴۰۵.`, todayDone: (a: number | string, b: number | string) => `امروز ${a} از ${b} کار انجام شد.` },
   holidays: {
     nowruz: 'عید نوروز', republic: 'روز جمهوری اسلامی', nature: 'روز طبیعت', khomeini: 'رحلت امام خمینی', khordad15: 'قیام ۱۵ خرداد', revolution: 'پیروزی انقلاب', oil: 'ملی شدن صنعت نفت',
     fitrHoliday: 'تعطیل عید فطر', sadiq: 'شهادت امام صادق', adha: 'عید قربان', ghadir: 'عید غدیر', tasua: 'تاسوعا', ashura: 'عاشورا', arbaeen: 'اربعین',

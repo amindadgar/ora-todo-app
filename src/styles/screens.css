@@ -47,3 +47,10 @@
   .money__grid{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"sum sum sum" "bud tx side"}
   .money__side{display:flex;flex-direction:column;gap:var(--space-24)}
 }
+
+/* secondary screens */
+.narrow{max-width:720px;margin-inline:auto}
+.goals{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--space-18);align-content:start}
+.goals__list,.goals__report{display:flex;flex-direction:column;gap:var(--space-18)}
+@media (min-width:1200px){.goals{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--space-40);align-items:start}}
+@media (min-width:1200px){.page-head__back{display:none}}

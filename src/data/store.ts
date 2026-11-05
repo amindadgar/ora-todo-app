@@ -4,8 +4,8 @@ import { makeSeed, emptyCollections } from './seed';
 import { loadState, saveState, clearState } from './persist';
 import { DEFAULT_SETTINGS, type Collections, type CollectionKey, type Persisted, type Settings } from './types';
 
-const COLLECTION_KEYS: CollectionKey[] = ['items', 'events', 'wishes', 'bills', 'savings', 'goals'];
-const pickCollections = (s: Collections): Collections => ({ items: s.items, events: s.events, wishes: s.wishes, bills: s.bills, savings: s.savings, goals: s.goals });
+const COLLECTION_KEYS: CollectionKey[] = ['activity', 'items', 'events', 'wishes', 'bills', 'savings', 'goals'];
+const pickCollections = (s: Collections): Collections => ({ activity: s.activity, items: s.items, events: s.events, wishes: s.wishes, bills: s.bills, savings: s.savings, goals: s.goals });
 
 interface DataState extends Collections {
   settings: Settings; hydrated: boolean; seededOn: number;
