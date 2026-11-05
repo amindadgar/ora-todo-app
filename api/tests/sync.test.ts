@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { setup, teardown, client, change, ORIGIN, type Ctx } from './helpers.js';
 
 let c: Ctx; beforeAll(async () => { c = await setup({ MAX_RECORDS_PER_USER: '100' }); }); afterAll(() => teardown(c));
-beforeEach(async () => { await c.db.query('truncate users, sessions, records cascade'); });
+beforeEach(async () => { await c.db.query('truncate users, sessions, records, telegram_links, telegram_link_codes cascade'); });
 const T0 = '2026-10-06T10:00:00.000Z', T1 = '2026-10-06T10:05:00.000Z', T2 = '2026-10-06T10:10:00.000Z';
 const push = (a: ReturnType<typeof client>, ...changes: object[]) => a.post('/v1/sync', { changes });
 

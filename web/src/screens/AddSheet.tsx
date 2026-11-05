@@ -6,6 +6,7 @@ import { useI18n } from '../i18n';
 import { today, monthOffset } from '../lib/calendar';
 import { parseEntry, applyMeridiem, detectType, categoryOf, type EntryType } from '../lib/parser';
 import { toLatinDigits } from '../lib/digits';
+import { buildEntry } from '../lib/entry';
 import { Sheet } from '../components/Feedback';
 import { SmartInput, DetectionCard, TypeTile, PillOption } from '../components/Inputs';
 import { Button } from '../components/Buttons';
@@ -13,7 +14,6 @@ import { Icon } from '../components/Icon';
 import { buzz } from '../interactions/haptics';
 import { useCalMode } from './Home';
 import type { IconName } from '../tokens/tokens';
-import type { Item } from '../data/types';
 
 const TYPE_ICON: Record<EntryType, IconName> = { task: 'task', event: 'calendar', reminder: 'reminder', important: 'star', expense: 'expense', income: 'income', bill: 'bill', saving: 'money', wish: 'heart', goal: 'goal' };
 const GROUPS: [keyof import('../i18n/dict').Dict['groups'], EntryType[]][] = [['plan', ['task', 'event', 'reminder', 'important']], ['money', ['expense', 'income', 'bill', 'saving']], ['forMe', ['wish', 'goal']]];
@@ -53,12 +53,8 @@ export function AddSheet({ preset, screen }: { preset: AddPreset; screen: Screen
 
   const save = () => {
     const s = useData.getState(), snap = s.snapshot(), id = uid();
-    if (type === 'wish') s.mutate('wishes', (l) => [{ id, title, meta: t.newIdea }, ...l]);
-    else if (type === 'important') s.mutate('events', (l) => [...l, { id, title, day: dateJ, yearly: true }]);
-    else if (type === 'bill') s.mutate('bills', (l) => [...l, { id, title, day: dateJ, amount: P.amount || 0 }]);
-    else if (type === 'saving') s.mutate('savings', (l) => [...l, { id, title, have: 0, target: P.amount || 1000000 }]);
-    else if (type === 'goal') s.mutate('goals', (l) => [...l, { id, title, have: 0, target: +(target || 1), unit: '' }]);
-    else s.mutate('items', (l) => [...l, { id, type: type as Item['type'], title, day: dateJ, time: hasTime ? P.time || '' : '', ...(P.amount ? { amount: P.amount } : {}), ...(type === 'expense' ? { cat: categoryOf(text) } : {}) }]);
+    const e = buildEntry({ type, id, title, day: dateJ, time: P.time, amount: P.amount, target, rawText: text, newIdeaLabel: t.newIdea });
+    s.mutate(e.collection as 'items', ((l: unknown[]) => (e.prepend ? [e.record, ...l] : [...l, e.record])) as never);
     if (dest === 'calendar') cal.set({ day: dateJ, off: monthOffset(mode, T, dateJ), dir: 0 });
     ui.closeAdd(); ui.notify(t.savedTo + destName, { undo: snap, view: dest === screen ? null : dest });
   };

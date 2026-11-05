@@ -9,14 +9,15 @@ import { createVerifier, type TokenVerifier } from './auth/google.js';
 import { resolveSession, type SessionUser } from './auth/session.js';
 import { authRoutes, cookieName } from './routes/auth.js';
 import { syncRoutes } from './routes/sync.js';
+import { telegramRoutes, botAuthorized } from './routes/telegram.js';
 
 declare module 'fastify' { interface FastifyRequest { user?: SessionUser } }
 
 const UNSAFE = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 const PUBLIC = new Set(['/healthz', '/readyz', '/auth/google', '/auth/logout']);
 
-export async function buildApp(opts: { cfg: Config; db: Db; verifier?: TokenVerifier }): Promise<FastifyInstance> {
-  const { cfg, db } = opts; const verifier = opts.verifier ?? createVerifier(cfg);
+export async function buildApp(opts: { cfg: Config; db: Db; verifier?: TokenVerifier; now?: () => Date }): Promise<FastifyInstance> {
+  const { cfg, db } = opts; const now = opts.now ?? (() => new Date()); const verifier = opts.verifier ?? createVerifier(cfg);
   const app = Fastify({
     trustProxy: true, bodyLimit: 1_048_576,
     logger: { level: cfg.LOG_LEVEL, redact: ['req.headers.cookie', 'req.headers.authorization', 'res.headers["set-cookie"]'] }
@@ -27,7 +28,7 @@ export async function buildApp(opts: { cfg: Config; db: Db; verifier?: TokenVeri
 
   // CSRF: browsers always send Origin on cross-site POST/DELETE; require it to be one of ours.
   app.addHook('onRequest', async (req, reply) => {
-    if (!UNSAFE.has(req.method)) return;
+    if (!UNSAFE.has(req.method) || req.url.startsWith('/bot/')) return;      // /bot/* is server-to-server (Bearer secret), not a browser
     const origin = req.headers.origin;
     if (!origin || !cfg.ALLOWED_ORIGINS.includes(origin)) return reply.code(403).send({ error: 'bad_origin' });
   });
@@ -35,6 +36,11 @@ export async function buildApp(opts: { cfg: Config; db: Db; verifier?: TokenVeri
   app.addHook('preHandler', async (req, reply) => {
     const path = req.url.split('?')[0]!;
     if (PUBLIC.has(path)) return;
+    if (path.startsWith('/bot/')) {                                            // the Telegram Worker authenticates with a shared secret
+      if (!cfg.BOT_SHARED_SECRET) return reply.code(503).send({ error: 'not_configured' });
+      if (!botAuthorized(cfg, req.headers.authorization)) return reply.code(401).send({ error: 'unauthorized' });
+      return;
+    }
     const token = req.cookies[cookieName(cfg)];
     const user = token ? await resolveSession(db, token, cfg.SESSION_TTL_DAYS) : null;
     if (!user) return reply.code(401).send({ error: 'unauthorized' });
@@ -52,5 +58,6 @@ export async function buildApp(opts: { cfg: Config; db: Db; verifier?: TokenVeri
   app.get('/readyz', async (_req, reply) => { try { await db.query('select 1'); return { ok: true }; } catch { return reply.code(503).send({ ok: false }); } });
   authRoutes(app, db, cfg, verifier);
   syncRoutes(app, db, cfg);
+  telegramRoutes(app, db, cfg, now);
   return app;
 }

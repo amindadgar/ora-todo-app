@@ -14,6 +14,10 @@ const schema = z.object({
   /** Dev/test only: accept `mock:<id>:<name>` credentials instead of real Google tokens. Refused in production. */
   AUTH_MOCK: bool.default(false),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
+  /** Shared secret the Telegram Worker presents (Bearer) to the /bot/* endpoints. Unset → the bot integration is disabled. */
+  BOT_SHARED_SECRET: z.string().trim().min(32, 'BOT_SHARED_SECRET must be at least 32 characters').optional().or(z.literal('').transform(() => undefined)),
+  /** Public bot username (without @), used to build the t.me deep link. */
+  TELEGRAM_BOT_USERNAME: z.string().trim().regex(/^[A-Za-z0-9_]{3,64}$/, 'invalid bot username').optional().or(z.literal('').transform(() => undefined)),
   /** Max Postgres connections held by this process. Small on purpose: each idle backend costs the database ~5-10 MB. */
   DB_POOL_MAX: z.coerce.number().int().min(1).max(50).default(5),
   /** Soft cap on stored records per user. */

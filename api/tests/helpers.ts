@@ -8,11 +8,11 @@ export const TEST_DB = process.env.DATABASE_URL_TEST ?? 'postgres://ora@127.0.0.
 export const ORIGIN = 'http://localhost:5173';
 
 export interface Ctx { app: FastifyInstance; db: Db; cfg: Config }
-export async function setup(over: Record<string, string> = {}, verifier?: TokenVerifier): Promise<Ctx> {
+export async function setup(over: Record<string, string> = {}, verifier?: TokenVerifier, now?: () => Date): Promise<Ctx> {
   const cfg = loadConfig({ NODE_ENV: 'test', DATABASE_URL: TEST_DB, AUTH_MOCK: 'true', LOG_LEVEL: 'silent', ALLOWED_ORIGINS: ORIGIN, ...over });
   const db = createPool(TEST_DB); await migrate(db);
-  await db.query('truncate users, sessions, records cascade');
-  const app = await buildApp({ cfg, db, verifier }); await app.ready();
+  await db.query('truncate users, sessions, records, telegram_links, telegram_link_codes cascade');
+  const app = await buildApp({ cfg, db, verifier, now }); await app.ready();
   return { app, db, cfg };
 }
 export const teardown = async (c: Ctx) => { await c.app.close(); await c.db.end(); };
