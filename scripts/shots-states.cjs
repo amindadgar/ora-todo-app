@@ -7,7 +7,7 @@ const TXT = { en: 'Dentist tomorrow 5pm', fa: 'دندانپزشکی فردا س�
 (async () => {
   require('fs').mkdirSync(out, { recursive: true }); const browser = await chromium.launch();
   for (const w of widths) for (const lang of langs) for (const theme of themes) {
-    const ctx = await browser.newContext({ viewport: { width: w, height: H[w] || 900 }, deviceScaleFactor: w < 500 ? 3 : 1, reducedMotion: 'reduce' });
+    const ctx = await browser.newContext({ viewport: { width: w, height: H[w] || 900 }, deviceScaleFactor: w < 500 ? 3 : 1, hasTouch: w < 500, isMobile: w < 500, reducedMotion: 'reduce' });
     const page = await ctx.newPage(); const errs = []; page.on('pageerror', (e) => errs.push(String(e)));
     const url = (s) => `http://localhost:5173/?today=2026-10-06&splash=0&lang=${lang}&theme=${theme}#/${s}`;
     const fresh = async (s) => { await page.goto(url(s)); await page.evaluate(() => { localStorage.clear(); indexedDB.deleteDatabase('ora'); }); await page.goto(url(s)); await page.waitForTimeout(500); };

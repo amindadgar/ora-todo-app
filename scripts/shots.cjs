@@ -10,7 +10,7 @@ const H = { 390: 844, 834: 1112, 1440: 900 };
   require('fs').mkdirSync(out, { recursive: true });
   const browser = await chromium.launch();
   for (const w of widths) for (const lang of langs) for (const theme of themes) {
-    const ctx = await browser.newContext({ viewport: { width: w, height: H[w] || 900 }, deviceScaleFactor: w < 500 ? 3 : 1, reducedMotion: 'reduce' });
+    const ctx = await browser.newContext({ viewport: { width: w, height: H[w] || 900 }, deviceScaleFactor: w < 500 ? 3 : 1, hasTouch: w < 500, isMobile: w < 500, reducedMotion: 'reduce' });
     const page = await ctx.newPage(); const errs = [];
     page.on('pageerror', (e) => errs.push(String(e))); page.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
     for (const s of screens) {

@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { today } from './lib/calendar';
 import { useData } from './data/store';
 import { useUI, type Screen } from './data/ui';
 import { useRoute } from './data/route';
@@ -25,6 +26,9 @@ export function App({ skipSplash }: { skipSplash?: boolean }) {
   useDocumentSettings();
   const f = useI18n(); const { t } = f; const ui = useUI(); const [screen, go, back] = useRoute(); useShortcuts(go);
   const settings = useData((s) => s.settings);
+  // re-render when the calendar day changes while the app stays open
+  const [, setDay] = useState(today());
+  useEffect(() => { const i = setInterval(() => setDay(today()), 30000); return () => clearInterval(i); }, []);
   useEffect(() => { if (skipSplash) ui.setSplash(false); }, [skipSplash]);   // eslint-disable-line react-hooks/exhaustive-deps
 
   const tabs: NavDef[] = [

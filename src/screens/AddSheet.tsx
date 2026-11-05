@@ -93,7 +93,7 @@ export function AddSheet({ preset, screen }: { preset: AddPreset; screen: Screen
       </div>
       <DetectionCard type={t.types[type]} how={manual ? t.yourChoice : t.detectedAuto} title={title || '—'} rows={rows} empty={title ? undefined : t.typeFirst}>
         {raw.ambiguous && hasTime && (
-          <div role="radiogroup" aria-label={t.morning} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)', flexWrap: 'wrap', paddingInlineStart: 28 }}>
+          <div role="radiogroup" aria-label={t.morning} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)', flexWrap: 'wrap', paddingInlineStart: 'calc(var(--space-18) + var(--space-10))' }}>
             <span className="t-caption muted">{t.morning}</span>
             {(['am', 'pm'] as const).map((o) => <PillOption key={o} selected={chosen === o} onClick={() => setAmpm(o)}>{(fa ? N(raw.hour ?? '') + ' ' : (raw.hour ?? '') + ' ') + t[o]}</PillOption>)}
           </div>

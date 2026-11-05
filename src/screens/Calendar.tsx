@@ -34,7 +34,7 @@ export function CalendarScreen() {
   // select a day (and move the visible month if needed)
   const pick = (d: Day, focus = false) => {
     cal.set({ day: d, off: monthOffset(mode, T, d), dir: 0 });
-    if (focus) requestAnimationFrame(() => gridRef.current?.querySelector<HTMLElement>(`[data-jdn="${d}"]`)?.focus());
+    if (focus) requestAnimationFrame(() => gridRef.current?.querySelector<HTMLElement>(`[data-jdn="${d}"] button`)?.focus());
   };
   // keyboard: arrows move days (RTL-aware), PageUp/PageDown change month, T = today, Home/End = month edges
   const onGridKey = (e: React.KeyboardEvent) => {
@@ -80,7 +80,7 @@ export function CalendarScreen() {
             {Array.from({ length: m.length }, (_, i) => {
               const d = m.start + i, j = toJ(d), g = toG(d);
               return (
-                <div key={d} data-jdn={d} tabIndex={-1} style={{ display: 'contents' }}>
+                <div key={d} data-jdn={d} role="gridcell" style={{ display: 'contents' }}>
                   <CalendarDay n={N(i + 1)} alt={settings.showAlt ? (mode === 'j' ? String(g.gd) : N(j.jd)) : undefined} selected={d === sel} today={d === T}
                     red={isFriday(d) || !!f.holiday(d)} hasEvent={has(d)} label={f.weekday(d) + ' ' + f.jLabel(d, true) + (f.holiday(d) ? SEP + f.holiday(d) : '')}
                     tabIndex={d === sel ? 0 : -1} onClick={() => { if (!swipe.suppressed()) pick(d); }} />

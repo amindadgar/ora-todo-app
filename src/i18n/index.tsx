@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useData } from '../data/store';
 import { makeFormat, type Fmt } from './format';
+import { primitives } from '../tokens/tokens';
 
 /** Language + direction + formatters, derived from settings. */
 export function useI18n(): Fmt & { dir: 'rtl' | 'ltr' } {
@@ -17,7 +18,7 @@ export function useDocumentSettings() {
     const apply = () => {
       const dark = theme === 'dark' || (theme === 'auto' && !!mq?.matches);
       document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0F1720' : '#2E74BA');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? primitives['neutral-950'] : primitives['blue-500']);
     };
     apply(); mq?.addEventListener?.('change', apply); return () => mq?.removeEventListener?.('change', apply);
   }, [theme]);

@@ -61,8 +61,8 @@ export function TaskRow({ title, meta, urgent, done, pending, actions, labels, o
   return (
     <div className={cls}>
       <div className="taskrow__under" aria-hidden="true" style={{ background: sw.dx > 0 ? 'var(--c-status-success)' : sw.dx < 0 ? 'var(--c-status-danger)' : 'transparent', opacity: op }}>
-        <span style={{ display: 'flex', gap: 6, transform: `scale(${sw.dx > 88 ? 1.12 : 1})`, transition: 'transform .15s' }}>{sw.dx > 0 ? '✓ ' + labels.done : ''}</span>
-        <span style={{ display: 'flex', gap: 6, transform: `scale(${sw.dx < -88 ? 1.12 : 1})`, transition: 'transform .15s' }}>{sw.dx < 0 ? labels.del : ''}</span>
+        <span style={{ display: 'flex', gap: 'var(--space-6)', transform: `scale(${sw.dx > 88 ? 1.12 : 1})`, transition: 'transform .15s' }}>{sw.dx > 0 ? '✓ ' + labels.done : ''}</span>
+        <span style={{ display: 'flex', gap: 'var(--space-6)', transform: `scale(${sw.dx < -88 ? 1.12 : 1})`, transition: 'transform .15s' }}>{sw.dx < 0 ? labels.del : ''}</span>
       </div>
       <div className="taskrow__fg" {...sw.bind}
         style={{ transform: `translateX(${sw.dx}px)`, transition: sw.animate ? 'transform .22s var(--ease-out)' : 'none', background: sw.dx !== 0 ? 'var(--c-bg-surface)' : 'transparent' }}>
