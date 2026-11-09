@@ -3,6 +3,8 @@
 .screen--flush{padding-top:0}
 .stack{display:flex;flex-direction:column;gap:var(--space-8)}
 .splash{position:absolute;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-14);animation:rz-fade .3s ease-out;background:var(--c-splash-bg);color:var(--p-neutral-0);text-align:center}
+.install-slot:not(:empty){padding:var(--space-20) var(--gutter) 0}
+.install-slot:not(:empty)+.home{padding-top:var(--space-16)}
 .tip__mouse{display:none}
 @media (hover:hover) and (min-width:1200px){.tip__touch{display:none}.tip__mouse{display:inline}}
 

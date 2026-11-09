@@ -17,6 +17,7 @@ import { TextButton, IconButton } from '../components/Buttons';
 import { Icon } from '../components/Icon';
 import { buzz } from '../interactions/haptics';
 import { motion } from '../tokens/tokens';
+import { InstallBanner } from '../components/InstallUI';
 import type { Item } from '../data/types';
 
 export function useCalMode(): CalMode { const m = useData((s) => s.settings.calMode); const lang = useData((s) => s.settings.lang); return m ?? (lang === 'fa' ? 'j' : 'g'); }
@@ -75,6 +76,8 @@ export function Home({ go }: { go: (s: 'calendar' | 'wishlist') => void }) {
   const mm = monthAt(mode, T, 0), lead = weekdayIndex(mm.start);
   const todayLine = f.fullLabel(T) + SEP + (f.fa ? f.gLabel(T) : f.jLabel(T, true));
   return (
+    <>
+    <div className="install-slot"><InstallBanner t={t} /></div>
     <main className="screen home" aria-label={t.home}>
       <div className="home__head app-head">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
@@ -144,5 +147,6 @@ export function Home({ go }: { go: (s: 'calendar' | 'wishlist') => void }) {
         </section>
       )}
     </main>
+    </>
   );
 }

@@ -21,6 +21,7 @@ import { Toast, Confetti } from './components/Feedback';
 import { Splash } from './components/Splash';
 import { HeaderActions } from './components/HeaderActions';
 import { Credits } from './components/Credits';
+import { InstallHelp } from './components/InstallUI';
 import { Home } from './screens/Home';
 import { CalendarScreen } from './screens/Calendar';
 import { MoneyScreen } from './screens/Money';
@@ -30,6 +31,12 @@ export function App({ skipSplash }: { skipSplash?: boolean }) {
   const f = useI18n(); const { t } = f; const ui = useUI(); const [screen, go, back] = useRoute(); useShortcuts(go);
   const settings = useData((s) => s.settings);
   // re-render when the calendar day changes while the app stays open
+  // the home-screen shortcut opens /?add=1 → straight to the Add sheet (once, for a signed-in user)
+  const mode0 = useAuth((a) => a.mode);
+  useEffect(() => {
+    if (mode0 === null) return; const q = new URLSearchParams(location.search);
+    if (q.has('add')) { q.delete('add'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); useUI.getState().openAdd(); }
+  }, [mode0]);
   const [, setDay] = useState(today());
   useEffect(() => { const i = setInterval(() => setDay(today()), 30000); return () => clearInterval(i); }, []);
   useEffect(() => { if (skipSplash) ui.setSplash(false); }, [skipSplash]);   // eslint-disable-line react-hooks/exhaustive-deps
@@ -43,7 +50,7 @@ export function App({ skipSplash }: { skipSplash?: boolean }) {
   const side = (id: Screen, label: string, icon: NavDef['icon'] | 'star' | 'heart' | 'goal' | 'settings', kbd?: string) => ({ id, label, icon: icon as never, kbd });
   void settings;
   const mode = useAuth((a) => a.mode);
-  if (mode === null) return (<>{<Login />}{ui.splash && <Splash tagline={t.tagline} label={t.skipSplash} onDone={() => ui.setSplash(false)} />}</>);
+  if (mode === null) return (<>{<Login />}<InstallHelp t={t} />{ui.splash && <Splash tagline={t.tagline} label={t.skipSplash} onDone={() => ui.setSplash(false)} />}</>);
   return (
     <NavCtx.Provider value={{ screen, go, back }}>
     <div className="shell">
@@ -70,6 +77,7 @@ export function App({ skipSplash }: { skipSplash?: boolean }) {
         { label: t.goals, desc: t.goalsDesc, icon: 'goal', go: () => { ui.setMore(false); go('goals'); } }, { label: t.settings, desc: t.settingsDesc, icon: 'settings', go: () => { ui.setMore(false); go('settings'); } }]} />}
       {ui.addOpen && <AddSheet preset={ui.addOpen} screen={screen} />}
       {ui.edit && <EditSheet kind={ui.edit.kind} id={ui.edit.id} />}
+      <InstallHelp t={t} />
       {ui.help && <HelpDialog t={t} onClose={() => ui.setHelp(false)} />}
       {ui.fly && <div className="fly" aria-hidden="true" style={{ left: ui.fly.x, top: ui.fly.y, transform: `translateX(${ui.fly.go ? ui.fly.x1 - ui.fly.x : 0}px)`, transition: ui.fly.go ? 'transform .58s cubic-bezier(.3,.1,.5,1)' : 'none' }}>
         <span className="fly__dot" style={{ transform: `translateY(${ui.fly.go ? ui.fly.y1 - ui.fly.y : 0}px) scale(${ui.fly.go ? 0.6 : 1})`, transition: ui.fly.go ? 'transform .58s cubic-bezier(.6,-.35,.8,.6)' : 'none' }} />

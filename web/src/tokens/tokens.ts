@@ -88,6 +88,7 @@ export const iconPaths = {
   bell: 'M6 9a6 6 0 1 1 12 0c0 6 3 8 3 8H3s3-2 3-8M10 20a2 2 0 0 0 4 0',
   undo: 'M9 14 4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3',
   hand: 'M9 11V5a2 2 0 0 1 4 0v6M13 10a2 2 0 0 1 4 0v3a6 6 0 0 1-6 6h-1a5 5 0 0 1-4.5-2.8L4 13.5a1.6 1.6 0 0 1 2.7-1.6L9 14',
+  share: 'M12 15V3M8 7l4-4 4 4M7 11H6a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1', download: 'M12 3v12M7 10l5 5 5-5M5 21h14', link: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
   more2: 'M5 12h.01M12 12h.01M19 12h.01', edit: 'M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4'
 } as const;
 export type IconName = keyof typeof iconPaths;

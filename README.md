@@ -40,6 +40,15 @@ private network. The api is never exposed publicly, so its attack surface is onl
   last sync and pulls what other devices changed (per-record **last write wins**, tombstones for deletes, a server cursor for pulls). Language and theme
   are device-local and not synced. Details: [`api/README.md`](api/README.md).
 
+### Installing on a phone (add to home screen)
+Ora is an installable PWA. The app helps people do it, whatever their browser:
+* **Android / Chrome, Edge, Samsung Internet** — a banner with a one-tap **Install** (uses the browser's native prompt) appears on the Home screen.
+* **iPhone / iPad (Safari, or Chrome/Edge on iOS)** — Apple has no install prompt, so the banner opens a short **Share → Add to Home Screen** guide (EN/FA).
+* **In-app browsers** (Instagram, Facebook, Telegram…) can't install; the guide says to open the page in a real browser and offers **Copy link**.
+* **Desktop** — Chrome/Edge get the Install button; Safari gets "File → Add to Dock" instructions; Firefox has no install support so nothing is shown.
+The banner can be closed (it stays hidden for 14 days); **Settings → Install Ora** and a link on the login screen are always available until it's installed. Nothing is shown once the app runs standalone.
+Long-pressing the installed icon offers an **Add** shortcut (`/?add=1`). The manifest, icons (any + maskable, 180px iOS icon) and iOS meta tags are in `web/vite.config.ts` and `web/index.html`; installability needs HTTPS (the Railway domain has it).
+
 ### Telegram
 The bot runs as a Cloudflare Worker (free plan) so it needs no always-on process. *Settings → Connect Telegram* creates a one-time code and a `t.me` deep link; pressing Start in Telegram links the chat to the account. Setup steps are in [`bot/README.md`](bot/README.md); the api needs `BOT_SHARED_SECRET` and `TELEGRAM_BOT_USERNAME` to enable it.
 

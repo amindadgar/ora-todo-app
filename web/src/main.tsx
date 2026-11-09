@@ -8,12 +8,14 @@ import './styles/screens.css';
 import { App } from './App';
 import { useData } from './data/store';
 import { useAuth } from './data/auth';
+import { initInstall } from './data/install';
 import { setToday, dayFromG } from './lib/calendar';
 
 // tokens → CSS custom properties (single source: tokens.ts)
 const style = document.createElement('style'); style.id = 'ora-tokens'; style.textContent = buildTokenCss() + buildTypeClasses(); document.head.prepend(style);
 
 // test/screenshot hook: ?today=2026-10-06&lang=fa&theme=dark&splash=0
+initInstall();                      // listen for the browser's install prompt before React mounts
 const q = new URLSearchParams(location.search);
 const td = q.get('today'); if (td) { const [y, m, d] = td.split('-').map(Number); setToday(dayFromG(y, m, d)); }
 void useAuth.getState().boot().then(async () => {

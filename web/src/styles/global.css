@@ -299,3 +299,13 @@ kbd{font-family:var(--font-en);font-size:var(--t-micro-size);font-weight:600;pad
 .credits{margin:0}
 .credit-link{color:inherit;text-decoration:underline;text-underline-offset:2px;border-radius:var(--radius-xs)}
 @media (hover:hover){.credit-link:hover{color:var(--c-brand-primary)}}
+
+/* install banner + instructions */
+.install{display:flex;align-items:center;gap:var(--space-12);padding:var(--space-12) var(--space-12) var(--space-12) var(--space-16);animation:rz-rise .3s ease-out}
+[dir="rtl"] .install{padding:var(--space-12) var(--space-16) var(--space-12) var(--space-12)}
+.install__icon{border-radius:var(--radius-md);flex:none}
+.install__text{flex:1;min-width:0;display:flex;flex-direction:column}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--space-14)}
+.steps li{display:flex;gap:var(--space-12);align-items:flex-start}
+.steps__n{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--c-bg-soft);color:var(--c-text-on-soft);font-weight:700;font-size:var(--t-small-size)}
+.steps svg{display:inline-block;vertical-align:-4px}

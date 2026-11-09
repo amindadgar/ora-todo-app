@@ -6,6 +6,7 @@ import { Button } from '../components/Buttons';
 import { GoogleButton } from '../components/GoogleButton';
 import { HeaderActions } from '../components/HeaderActions';
 import { Credits } from '../components/Credits';
+import { InstallLink } from '../components/InstallUI';
 
 /** Sign-in: Google (starts with an empty app) or the demo data (exactly as before). */
 export function Login() {
@@ -26,6 +27,7 @@ export function Login() {
           <Button size="lg" block onClick={() => void useAuth.getState().continueGuest()}>{t.tryDemo}</Button>
         </div>
         <p className="t-caption muted">{t.localNote}</p>
+        <InstallLink t={t} />
       </div>
       <Credits t={t} className="login__credit" />
     </main>

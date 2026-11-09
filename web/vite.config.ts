@@ -11,12 +11,17 @@ export default defineConfig({
       workbox: { navigateFallbackDenylist: [/^\/api\//] },
       includeAssets: ['icon.svg'],
       manifest: {
-        name: 'Ora', short_name: 'Ora', description: 'A calm, bilingual daily planner.',
-        theme_color: '#2E74BA', background_color: '#F4F8FC', display: 'standalone', start_url: '/',
+        id: '/', name: 'Ora', short_name: 'Ora', description: 'A calm, bilingual daily planner.',
+        theme_color: '#2E74BA', background_color: '#F4F8FC', display: 'standalone', display_override: ['standalone', 'minimal-ui'], start_url: '/', scope: '/',
+        categories: ['productivity', 'lifestyle'],
         icons: [
-          { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
-        ]
+          { src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          // the logo sits well inside the central 80% "safe zone", so the same artwork also works as a maskable (cropped) icon
+          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+        ],
+        // long-press the home-screen icon (Android / desktop) → straight to "Add"
+        shortcuts: [{ name: 'Add', short_name: 'Add', url: '/?add=1', icons: [{ src: 'icon-192.png', sizes: '192x192', type: 'image/png' }] }]
       }
     })
   ],

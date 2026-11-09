@@ -37,6 +37,8 @@
 		root * /srv
 		@immutable path /assets/*
 		header @immutable Cache-Control "public, max-age=31536000, immutable"
+		@manifest path /manifest.webmanifest
+		header @manifest Content-Type "application/manifest+json"
 		@revalidate path / /index.html /sw.js /registerSW.js /manifest.webmanifest /workbox-*.js
 		header @revalidate Cache-Control "no-cache"
 		try_files {path} /index.html
