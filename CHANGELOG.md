@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0 — easy install to the home screen
+- Install banner on Home (touch devices), *Settings → Install Ora*, and a login-screen link; native prompt on Chromium, step-by-step guides for iOS, Android, desktop Safari and in-app browsers (EN/FA).
+- Richer manifest (id, scope, categories, any + maskable icons, "Add" shortcut), iOS home-screen icon and meta tags, correct manifest content type from the gateway.
+- Platform detection is unit-tested (iPhone/iPad, Android, Firefox, WebViews, in-app browsers, desktop); a browser test covers each flow.
+
 ## 0.4.0 — Telegram bot
 - New `bot/` Cloudflare Worker: webhook + cron. Type entries in English or Persian (same parser as the app), `/today` with ✓ buttons, `/lang`, `/stop`, Undo, morning brief (7:30) and evening review (22:00) in the user's time zone.
 - api: Telegram link codes (one-time, hashed, 10 min), `/v1/telegram` for the app, `/bot/*` for the Worker (shared-secret auth), `/bot/due` + ack scheduling; push logic shared with `/v1/sync`.
