@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { useData, exportJson, importJson, clearState } from '../data/store';
+import { useData, clearState } from '../data/store';
 import { useUI } from '../data/ui';
 import { useNav } from '../data/nav';
 import { useAuth } from '../data/auth';
@@ -18,8 +17,7 @@ import { revealTheme } from '../interactions/themeReveal';
 export function SettingsScreen() {
   const f = useI18n(); const { t } = f; const ui = useUI(); const nav = useNav(); const mode = useCalMode();
   const { mode: authMode, user } = useAuth(); const real = authMode === 'google'; const sync = useSyncStatus();
-  const { settings: s, setSettings: set } = useData(); const file = useRef<HTMLInputElement>(null);
-  const row = (label: string, ctl: React.ReactNode, key: string) => <div key={key} className="row" style={{ justifyContent: 'space-between', padding: 'var(--space-10) 0' }}><span className="t-label" style={{ fontWeight: 400 }}>{label}</span>{ctl}</div>;
+  const { settings: s, setSettings: set } = useData();  const row = (label: string, ctl: React.ReactNode, key: string) => <div key={key} className="row" style={{ justifyContent: 'space-between', padding: 'var(--space-10) 0' }}><span className="t-label" style={{ fontWeight: 400 }}>{label}</span>{ctl}</div>;
   const sw = (id: string, label: string, sub: string, on: boolean, flip: () => void) => (
     <div key={id} className="row" style={{ padding: 'var(--space-10) 0' }}>
       <div className="row__body"><span id={'sw-' + id} className="t-label" style={{ fontWeight: 400 }}>{label}</span><span className="t-caption muted">{sub}</span></div>
@@ -28,7 +26,6 @@ export function SettingsScreen() {
   );
   const reset = () => {
     const snap = useData.getState().snapshot();
-    if (real) { useData.getState().clearAll(); ui.notify(t.dataCleared, { undo: snap }); return; }   // a real account never gets demo data
     void clearState(); useData.getState().resetToSamples(); ui.notify(t.sampleRestored, { undo: snap });
   };
   return (
@@ -57,16 +54,22 @@ export function SettingsScreen() {
           {sw('e', t.eveningReview, f.time('22:00'), s.evening, () => set({ evening: !s.evening }))}
           {!real && sw('fresh', t.previewNew, t.previewNewDesc, s.fresh, () => useData.getState().setFresh(!s.fresh))}
         </Card>
-        <TextButton small style={{ alignSelf: 'flex-start' }} onClick={() => ui.setSplash(true)}>{t.replaySplash}</TextButton>
-        <TextButton small style={{ alignSelf: 'flex-start', color: 'var(--c-status-danger)' }} onClick={reset}>{real ? t.clearMyData : t.resetData}</TextButton>
-        {real && <TextButton small style={{ alignSelf: 'flex-start', color: 'var(--c-status-danger)' }} onClick={() => { if (window.confirm(t.deleteConfirm)) useAuth.getState().deleteAccount().catch(() => ui.notify(t.deleteFailed)); }}>{t.deleteAccount}</TextButton>}
-        <div style={{ display: 'flex', gap: 'var(--space-12)', flexWrap: 'wrap' }}>
-          <TextButton small onClick={() => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([exportJson()], { type: 'application/json' })); a.download = 'ora-backup.json'; a.click(); URL.revokeObjectURL(a.href); }}>{t.exportData}</TextButton>
-          <TextButton small onClick={() => file.current?.click()}>{t.importData}</TextButton>
-          <input ref={file} type="file" accept="application/json" hidden onChange={async (e) => { const fl = e.target.files?.[0]; if (!fl) return; ui.notify(importJson(await fl.text()) ? t.imported : t.importFailed); e.target.value = ''; }} />
-        </div>
-        <p className="t-overline muted" style={{ fontWeight: 400, letterSpacing: 0, lineHeight: 1.8 }}>{t.holidayNote}</p>
-        <p className="t-overline muted" style={{ fontWeight: 400, letterSpacing: 0 }}>{t.shortcuts}: {t.shortcutsDesc}</p>
+        {real ? (
+          <Card as="div" className="list" aria-label={t.deleteAccount}>
+            <div className="row" style={{ padding: 'var(--space-12) 0', alignItems: 'flex-start' }}>
+              <div className="row__body">
+                <span className="t-label" style={{ fontWeight: 600, color: 'var(--c-status-danger)' }}>{t.deleteAccount}</span>
+                <span className="t-caption muted">{t.deleteAccountDesc}</span>
+              </div>
+              <Button variant="secondary" size="sm" style={{ color: 'var(--c-status-danger)' }} onClick={() => { if (window.confirm(t.deleteConfirm)) useAuth.getState().deleteAccount().catch(() => ui.notify(t.deleteFailed)); }}>{t.deleteShort}</Button>
+            </div>
+          </Card>
+        ) : (
+          <>
+            <TextButton small style={{ alignSelf: 'flex-start' }} onClick={() => ui.setSplash(true)}>{t.replaySplash}</TextButton>
+            <TextButton small style={{ alignSelf: 'flex-start', color: 'var(--c-status-danger)' }} onClick={reset}>{t.resetData}</TextButton>
+          </>
+        )}
       </div>
     </main>
   );

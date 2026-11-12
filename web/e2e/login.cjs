@@ -40,8 +40,7 @@ const BASE = 'http://localhost:5173/?today=2026-10-06&splash=0&lang=en&theme=lig
   await p.click('.sidenav__item:has-text("Settings")'); await p.click('button:has-text("Sign out")'); await p.waitForTimeout(400); await open('acct1');
   await p.click('[data-testid=google-mock]'); await p.waitForTimeout(500); ok(await p.isVisible('text=Sara only task'), 'signing back in to the first account restores its data');
   // clear my data
-  await p.click('.sidenav__item:has-text("Settings")'); await p.click('button:has-text("Clear my data")'); await p.waitForTimeout(300);
-  ok(await p.isVisible('.toast:has-text("cleared")'), 'Clear my data empties the account (with Undo)'); await p.click('.sidenav__item:has-text("Home")'); ok((await p.locator('.taskrow').count()) === 0 && !(await p.isVisible('text=Bike ride')), 'cleared account never gets demo samples');
+  await p.click('.sidenav__item:has-text("Settings")'); ok(!(await p.isVisible('button:has-text("Clear my data")')) && !(await p.isVisible('text=Export')), 'no Clear/Export/Import clutter for real accounts'); ok(await p.isVisible('text=Delete my account and data'), 'single delete-account row'); await p.click('.sidenav__item:has-text("Home")'); ok((await p.locator('.taskrow').count()) === 0 && !(await p.isVisible('text=Bike ride')), 'cleared account never gets demo samples');
   await ctx.close();
   // Persian + phone login layout
   const c2 = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, reducedMotion: 'reduce' }); const q = await c2.newPage();
