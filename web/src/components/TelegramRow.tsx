@@ -5,7 +5,7 @@ import type { Dict, Lang } from '../i18n/dict';
 
 interface Status { enabled: boolean; linked: boolean }
 /** Settings row: link the Telegram bot to this account (hidden when the server has no bot configured). */
-export function TelegramRow({ t, lang }: { t: Dict; lang: Lang }) {
+export function TelegramRow({ t, lang, onLinked }: { t: Dict; lang: Lang; onLinked?: (v: boolean) => void }) {
   const [st, setSt] = useState<Status | null>(null); const [url, setUrl] = useState<string | null>(null); const [err, setErr] = useState(false); const [busy, setBusy] = useState(false);
   const load = useCallback(() => api<Status>('GET', '/v1/telegram').then(setSt).catch(() => setSt({ enabled: false, linked: false })), []);
   useEffect(() => { void load(); }, [load]);
@@ -15,6 +15,7 @@ export function TelegramRow({ t, lang }: { t: Dict; lang: Lang }) {
     const i = setInterval(() => { if (Date.now() > stop) { clearInterval(i); setUrl(null); } else void load(); }, 3000); return () => clearInterval(i);
   }, [url, st?.linked, load]);
   useEffect(() => { if (st?.linked) setUrl(null); }, [st?.linked]);
+  useEffect(() => { onLinked?.(!!st?.linked); }, [st?.linked, onLinked]);
   if (!st?.enabled) return null;
 
   const connect = async () => {

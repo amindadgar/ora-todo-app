@@ -9,9 +9,9 @@ const BASE = 'http://localhost:5173/?today=2026-10-06&splash=0&lang=en&theme=lig
   await p.goto(BASE); await p.evaluate(() => { localStorage.clear(); indexedDB.deleteDatabase('ora'); }); await open('acct1');
 
   ok(await p.isVisible('.login') && !(await p.isVisible('.sidenav')), 'first visit shows the login screen, no app shell');
-  ok(await p.isVisible('text=Continue with Google') && await p.isVisible('text=Try it with demo data'), 'login offers Google and demo');
+  ok(await p.isVisible('text=Continue with Google') && !(await p.isVisible('text=Try it with demo data')), 'login offers Google only');
   // demo path
-  await p.click('text=Try it with demo data'); await p.waitForTimeout(400);
+  await p.goto(BASE + '&guest=1'); await p.waitForTimeout(400);
   ok(await p.isVisible('h1:has-text("Hi Amin")'), 'demo: greeting is "Hi Amin"'); ok((await p.locator('.taskrow').count()) === 5, 'demo: the 5 sample tasks are there');
   // guest → Google
   await p.click('.sidenav__item:has-text("Settings")'); await p.waitForTimeout(400); ok(await p.isVisible('text=Demo data'), 'settings shows the Demo data account');
@@ -32,7 +32,7 @@ const BASE = 'http://localhost:5173/?today=2026-10-06&splash=0&lang=en&theme=lig
   await open('acct1'); ok(await p.isVisible('text=Sara only task') && await p.isVisible('h1:has-text("Hi Sara")'), 'session and data survive a reload');
   // sign out → demo intact
   await p.click('.sidenav__item:has-text("Settings")'); await p.click('button:has-text("Sign out")'); await p.waitForTimeout(500); ok(await p.isVisible('.login'), 'sign out returns to login');
-  await p.click('text=Try it with demo data'); await p.waitForTimeout(400);
+  await p.goto(BASE + '&guest=1'); await p.waitForTimeout(400);
   ok(await p.isVisible('h1:has-text("Hi Amin")') && (await p.locator('.taskrow').count()) === 5 && !(await p.isVisible('text=Sara only task')), 'demo data is intact and separate from the Google account');
   // second Google account is isolated
   await p.click('.sidenav__item:has-text("Settings")'); await p.click('button:has-text("Sign in with Google")'); await open('acct2');
