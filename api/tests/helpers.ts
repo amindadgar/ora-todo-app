@@ -11,7 +11,7 @@ export interface Ctx { app: FastifyInstance; db: Db; cfg: Config }
 export async function setup(over: Record<string, string> = {}, verifier?: TokenVerifier, now?: () => Date): Promise<Ctx> {
   const cfg = loadConfig({ NODE_ENV: 'test', DATABASE_URL: TEST_DB, AUTH_MOCK: 'true', LOG_LEVEL: 'silent', ALLOWED_ORIGINS: ORIGIN, ...over });
   const db = createPool(TEST_DB); await migrate(db);
-  await db.query('truncate users, sessions, records, telegram_links, telegram_link_codes cascade');
+  await db.query('truncate users, sessions, records, telegram_links, telegram_link_codes, gcal_links, push_subscriptions, reminder_sent, reminder_outbox cascade');
   const app = await buildApp({ cfg, db, verifier, now }); await app.ready();
   return { app, db, cfg };
 }

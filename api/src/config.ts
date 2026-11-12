@@ -18,6 +18,16 @@ const schema = z.object({
   BOT_SHARED_SECRET: z.string().trim().min(32, 'BOT_SHARED_SECRET must be at least 32 characters').optional().or(z.literal('').transform(() => undefined)),
   /** Public bot username (without @), used to build the t.me deep link. */
   TELEGRAM_BOT_USERNAME: z.string().trim().regex(/^[A-Za-z0-9_]{3,64}$/, 'invalid bot username').optional().or(z.literal('').transform(() => undefined)),
+  /** Google OAuth client secret (server-side code flow for Calendar). Unset → Calendar connect is disabled. */
+  GOOGLE_CLIENT_SECRET: z.string().trim().optional().transform((v) => v || undefined),
+  /** 32+ char secret used to encrypt Calendar refresh tokens and sign OAuth state. */
+  TOKEN_KEY: z.string().trim().min(32, 'TOKEN_KEY must be at least 32 characters').optional().or(z.literal('').transform(() => undefined)),
+  /** Public origin of the web app (for the OAuth redirect URI). Defaults to the first ALLOWED_ORIGINS entry. */
+  PUBLIC_URL: z.string().trim().optional().transform((v) => v || undefined),
+  /** Web Push (VAPID). All three unset → push is disabled. */
+  VAPID_PUBLIC_KEY: z.string().trim().optional().transform((v) => v || undefined),
+  VAPID_PRIVATE_KEY: z.string().trim().optional().transform((v) => v || undefined),
+  VAPID_SUBJECT: z.string().trim().default('mailto:admin@example.com'),
   /** Max Postgres connections held by this process. Small on purpose: each idle backend costs the database ~5-10 MB. */
   DB_POOL_MAX: z.coerce.number().int().min(1).max(50).default(5),
   /** Soft cap on stored records per user. */

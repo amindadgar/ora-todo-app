@@ -115,6 +115,15 @@ describe('/today and marking done', () => {
   });
 });
 
+describe('reminders (cron)', () => {
+  it('sends queued reminders once and acknowledges them; unlinks a chat that blocked the bot', async () => {
+    await link(7, 'en'); const uid = (await ctx.db.query('select user_id from telegram_links where chat_id = 7')).rows[0].user_id;
+    await ctx.db.query(`insert into reminder_outbox (user_id, chat_id, text) values ($1, 7, 'In 10 min: Standup · 16:00')`, [uid]); sent = [];
+    clock = new Date('2026-10-06T12:00:00Z'); expect(await runDue(deps())).toEqual({ sent: 1, failed: 0 });
+    expect(sent.map((x) => x.text)).toEqual(['In 10 min: Standup · 16:00']); expect(await runDue(deps())).toEqual({ sent: 0, failed: 0 });
+  });
+});
+
 describe('morning brief and evening review (cron)', () => {
   const settings = (a: ReturnType<typeof client>, data: object) => a.post('/v1/sync', { changes: [change('main', data, '2026-10-06T03:00:00.000Z', 'settings')] });
   it('sends each once per day at the right local time, with the right content', async () => {

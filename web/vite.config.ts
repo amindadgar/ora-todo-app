@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      workbox: { navigateFallbackDenylist: [/^\/api\//] },
+      workbox: { navigateFallbackDenylist: [/^\/api\//], importScripts: ['push-sw.js'] },
       includeAssets: ['icon.svg'],
       manifest: {
         id: '/', name: 'Ora', short_name: 'Ora', description: 'A calm, bilingual daily planner.',

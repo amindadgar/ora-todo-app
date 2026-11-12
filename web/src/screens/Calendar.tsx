@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useMeetings } from '../data/meetings';
 import { useData } from '../data/store';
 import { useUI } from '../data/ui';
 import { useCal } from '../data/calState';
@@ -19,7 +20,8 @@ export function CalendarScreen() {
   const sel = cal.day ?? T; const off = cal.off; const rtl = f.dir === 'rtl';
   const m = monthAt(mode, T, off);
   const lead = weekdayIndex(m.start);
-  const has = (d: Day) => items.some((x) => x.day === d) || bills.some((x) => x.day === d) || events.some((x) => x.day === d);
+  const meetings = useMeetings((m) => m.list);
+  const has = (d: Day) => items.some((x) => x.day === d) || meetings.some((x) => x.day === d) || bills.some((x) => x.day === d) || events.some((x) => x.day === d);
   const step = (n: 1 | -1) => cal.set({ off: off + n, dir: n });
   const swipe = useMonthSwipe(step, rtl);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -61,6 +63,7 @@ export function CalendarScreen() {
 
   const agenda: { key: string; title: string; time: string; color?: string; edit?: () => void }[] = [];
   const hol = f.holiday(sel); if (hol) agenda.push({ key: 'hol', title: hol, time: t.holiday, color: 'var(--c-status-danger)' });
+  meetings.filter((x) => x.day === sel).forEach((x) => agenda.push({ key: 'g' + x.id, title: x.title || t.meeting, time: f.time(x.start) + '–' + f.time(x.end), color: 'var(--c-brand-primary)' }));
   events.filter((x) => x.day === sel).forEach((x) => agenda.push({ key: x.id, title: text(x.title), time: t.keyDate, edit: () => ui.openEdit('events', x.id) }));
   bills.filter((x) => x.day === sel).forEach((x) => agenda.push({ key: x.id, title: text(x.title) + SEP + f.money(x.amount), time: t.due, edit: () => ui.openEdit('bills', x.id) }));
   items.filter((x) => x.day === sel).forEach((x) => agenda.push({ key: x.id, title: text(x.title) + (x.amount ? SEP + f.money(x.amount) : ''), time: f.time(x.time), color: x.done ? 'var(--c-text-secondary)' : undefined, edit: () => ui.openEdit('items', x.id) }));

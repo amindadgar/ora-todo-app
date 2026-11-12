@@ -7,6 +7,7 @@ import { useInstall } from '../data/install';
 import { initials } from '../lib/auth';
 import { useSyncStatus } from '../data/sync';
 import { TelegramRow } from '../components/TelegramRow';
+import { PushRow, GcalRow, remindOptions } from '../components/NotifyRows';
 import { InstallRow } from '../components/InstallUI';
 import { useI18n } from '../i18n';
 import { PageHeader } from '../components/Navigation';
@@ -66,6 +67,18 @@ export function SettingsScreen() {
           </Card>
         </>}
         {real && !tg.enabled && <div hidden><TelegramRow t={t} lang={s.lang} onStatus={setTg} /></div>}
+
+        {real && <>
+          {sec(t.secReminders)}
+          <Card as="div" className="list" aria-label={t.secReminders}>
+            <div className="row" style={{ padding: 'var(--space-10) 0', alignItems: 'flex-start', flexDirection: 'column', gap: 'var(--space-8)' }}>
+              <div className="row__body" style={{ width: '100%' }}><span id="sw-rd" className="t-label" style={{ fontWeight: 400 }}>{t.remindDefault}</span><span className="t-caption muted">{t.remindDefaultDesc}</span></div>
+              <Segment label={t.remindDefault} value={String(s.remindDefault)} options={remindOptions(t, f.N)} onChange={(v) => set({ remindDefault: +v })} />
+            </div>
+            <PushRow t={t} lang={s.lang} />
+            <GcalRow t={t} />
+          </Card>
+        </>}
 
         {installable && <>
           {sec(t.secAbout)}

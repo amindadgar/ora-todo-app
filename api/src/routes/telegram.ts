@@ -93,7 +93,12 @@ export function telegramRoutes(app: FastifyInstance, db: Db, cfg: Config, now: (
         due.push({ chatId: Number(x.chat_id), lang: x.lang, tz: x.tz, kind, localDate: date });
       }
     }
-    return { due };
+    const rem = await db.query<{ id: string; chat_id: string; text: string; lang: 'en' | 'fa' }>('select o.id, o.chat_id, o.text, l.lang from reminder_outbox o join telegram_links l on l.chat_id = o.chat_id order by o.id limit 50');
+    return { due, reminders: rem.rows.map((x) => ({ id: Number(x.id), chatId: Number(x.chat_id), text: x.text })) };
+  });
+  app.post('/bot/ack-reminder', async (req, reply) => {
+    const b = z.object({ id: z.coerce.number().int().positive() }).parse(req.body);
+    await db.query('delete from reminder_outbox where id = $1', [b.id]); return reply.code(204).send();
   });
   app.post('/bot/ack', async (req, reply) => {
     const b = z.object({ chatId, kind: z.enum(['morning', 'evening']), localDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }).parse(req.body);

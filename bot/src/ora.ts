@@ -22,7 +22,10 @@ export function oraClient(base: string, secret: string, f: typeof fetch = fetch)
     records: async (chatId: number, collection: string, id?: string) => (await call<{ records: Rec[] }>('GET', `/bot/records?chatId=${chatId}&collection=${collection}${id ? `&id=${encodeURIComponent(id)}` : ''}`)).records,
     changes: (chatId: number, changes: Change[]) => call<{ applied: number }>('POST', '/bot/changes', { chatId, changes }),
     due: async () => (await call<{ due: Due[] }>('GET', '/bot/due')).due,
-    ack: (d: Pick<Due, 'chatId' | 'kind' | 'localDate'>) => call('POST', '/bot/ack', d)
+    ack: (d: Pick<Due, 'chatId' | 'kind' | 'localDate'>) => call('POST', '/bot/ack', d),
+    /** Reminders ("In 10 min: …") the API queued for Telegram delivery. */
+    reminders: async () => (await call<{ reminders?: { id: number; chatId: number; text: string }[] }>('GET', '/bot/due')).reminders ?? [],
+    ackReminder: (id: number) => call('POST', '/bot/ack-reminder', { id })
   };
 }
 export type Ora = ReturnType<typeof oraClient>;

@@ -5,6 +5,7 @@ import { useUI, type Screen } from './data/ui';
 import { useRoute } from './data/route';
 import { NavCtx } from './data/nav';
 import { useAuth } from './data/auth';
+import { useMeetingsSync } from './data/meetings';
 import { Login } from './screens/Login';
 import { useShortcuts } from './interactions/useShortcuts';
 import { MoreMenu } from './components/MoreMenu';
@@ -33,7 +34,7 @@ export function App({ skipSplash }: { skipSplash?: boolean }) {
   const settings = useData((s) => s.settings);
   // re-render when the calendar day changes while the app stays open
   // the home-screen shortcut opens /?add=1 → straight to the Add sheet (once, for a signed-in user)
-  const mode0 = useAuth((a) => a.mode);
+  const mode0 = useAuth((a) => a.mode); useMeetingsSync();
   useEffect(() => {
     if (mode0 === null) return; const q = new URLSearchParams(location.search);
     if (q.has('add')) { q.delete('add'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); useUI.getState().openAdd(); }

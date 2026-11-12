@@ -1,6 +1,7 @@
 import { loadConfig } from './config.js';
 import { createPool, migrate } from './db.js';
 import { buildApp } from './app.js';
+import { runReminders, setupPush } from './reminders.js';
 
 const cfg = loadConfig();
 const db = createPool(cfg.DATABASE_URL, cfg.DB_POOL_MAX);
@@ -19,6 +20,14 @@ const sweep = async () => {
 };
 const timer = setInterval(sweep, 6 * 3600_000); timer.unref(); void sweep();
 
-const stop = async (sig: string) => { app.log.info({ sig }, 'shutting down'); clearInterval(timer); await app.close(); await db.end(); process.exit(0); };
+// reminders: one tick a minute (Web Push now, Telegram via the Worker's next poll)
+setupPush(cfg);
+let ticking = false;
+const rem = setInterval(async () => {
+  if (ticking) return; ticking = true;
+  try { const r = await runReminders(db, cfg, new Date()); if (r.delivered) app.log.info(r, 'reminders delivered'); } catch (e) { app.log.warn({ err: e }, 'reminder tick failed'); } finally { ticking = false; }
+}, 60_000); rem.unref();
+
+const stop = async (sig: string) => { app.log.info({ sig }, 'shutting down'); clearInterval(timer); clearInterval(rem); await app.close(); await db.end(); process.exit(0); };
 process.on('SIGTERM', () => void stop('SIGTERM')); process.on('SIGINT', () => void stop('SIGINT'));
 await app.listen({ port: cfg.PORT, host: cfg.HOST });

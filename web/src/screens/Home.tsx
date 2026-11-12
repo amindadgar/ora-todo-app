@@ -18,6 +18,7 @@ import { Icon } from '../components/Icon';
 import { buzz } from '../interactions/haptics';
 import { motion } from '../tokens/tokens';
 import { InstallBanner } from '../components/InstallUI';
+import { useMeetings, meetingsAsItems } from '../data/meetings';
 import type { Item } from '../data/types';
 
 export function useCalMode(): CalMode { const m = useData((s) => s.settings.calMode); const lang = useData((s) => s.settings.lang); return m ?? (lang === 'fa' ? 'j' : 'g'); }
@@ -26,7 +27,7 @@ export function Home({ go }: { go: (s: 'calendar' | 'wishlist' | 'settings') => 
   const f = useI18n(); const { t, N, L, text, SEP } = f;
   const { items, events, bills, wishes, settings } = useData();
   const ui = useUI(); const cal = useCal(); const mode = useCalMode(); const user = useAuth((a) => a.user);
-  const T = today();
+  const T = today(); const meetings = useMeetings((m) => m.list); const todaysMeetings = meetings.filter((m) => m.day === T);
   const [pend, setPend] = useState<string | null>(null); const [sugIdx, setSugIdx] = useState(0);
 
   const todays = items.filter((x) => x.day === T && (x.type === 'task' || x.type === 'event'));
@@ -35,7 +36,7 @@ export function Home({ go }: { go: (s: 'calendar' | 'wishlist' | 'settings') => 
   const total = todays.length, cnt = done.length, left = total - cnt;
   const msg = total === 0 ? t.fresh : cnt === 0 ? t.start : left === 0 ? t.allDone : left <= 2 ? t.fewLeft(N(left)) : t.goodStart;
 
-  const has = (d: number) => items.some((x) => x.day === d) || bills.some((x) => x.day === d) || events.some((x) => x.day === d);
+  const has = (d: number) => items.some((x) => x.day === d) || meetings.some((x) => x.day === d) || bills.some((x) => x.day === d) || events.some((x) => x.day === d);
   const ws = weekStart(T);
   const week = [0, 1, 2, 3, 4, 5, 6].map((i) => {
     const d = ws + i; return { d, wd: t.weekdaysShort[i], n: N(mode === 'j' ? toJ(d).jd : toG(d).gd), today: d === T, hol: i === 6 || !!f.holiday(d), has: has(d), label: f.fullLabel(d) };
@@ -43,7 +44,7 @@ export function Home({ go }: { go: (s: 'calendar' | 'wishlist' | 'settings') => 
   const gotoDay = (d: number) => { cal.set({ day: d, off: monthOffset(mode, T, d), dir: 0 }); go('calendar'); };
 
   const now = new Date(); const nowMin = now.getHours() * 60 + now.getMinutes();
-  const slot = useMemo(() => nextFreeSlot(items, T, Math.max(17 * 60, Math.ceil(nowMin / 30) * 30)), [items, T, nowMin]);
+  const slot = useMemo(() => nextFreeSlot([...items, ...meetingsAsItems(meetings)], T, Math.max(17 * 60, Math.ceil(nowMin / 30) * 30)), [items, meetings, T, nowMin]);
   const sw = wishes.length ? wishes[sugIdx % wishes.length] : null;
   const already = sw ? items.some((x) => x.day === T && text(x.title) === text(sw.title)) : false;
 
@@ -115,6 +116,20 @@ export function Home({ go }: { go: (s: 'calendar' | 'wishlist' | 'settings') => 
           <TextButton icon="plus" style={{ height: 48, paddingInline: 'var(--space-12)' }} onClick={() => ui.openAdd({ type: 'task', day: T })}>{t.addTask}</TextButton>
         </div>
       </Card>
+
+      {todaysMeetings.length > 0 && (
+        <Card className="home__meetings" aria-labelledby="meet-h">
+          <div style={{ padding: 'var(--space-12) var(--space-16) var(--space-4)' }}><h2 id="meet-h" className="t-subheading">{t.meetings}</h2></div>
+          <div style={{ padding: '0 var(--space-16) var(--space-8)' }}>
+            {todaysMeetings.map((m) => (
+              <div key={m.id} className="row" style={{ padding: 'var(--space-10) 0', gap: 'var(--space-12)' }}>
+                <span className="t-small brand" style={{ fontWeight: 600, minWidth: 96 }}>{f.time(m.start)}{L('–', '–')}{f.time(m.end)}</span>
+                <span className="t-body" style={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}>{m.title || t.meeting}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {sw && slot && (
         <div className="home__free">

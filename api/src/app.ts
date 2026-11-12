@@ -10,6 +10,8 @@ import { resolveSession, type SessionUser } from './auth/session.js';
 import { authRoutes, cookieName } from './routes/auth.js';
 import { syncRoutes } from './routes/sync.js';
 import { telegramRoutes, botAuthorized } from './routes/telegram.js';
+import { gcalRoutes } from './routes/gcal.js';
+import { pushRoutes } from './routes/push.js';
 
 declare module 'fastify' { interface FastifyRequest { user?: SessionUser } }
 
@@ -59,5 +61,7 @@ export async function buildApp(opts: { cfg: Config; db: Db; verifier?: TokenVeri
   authRoutes(app, db, cfg, verifier);
   syncRoutes(app, db, cfg);
   telegramRoutes(app, db, cfg, now);
+  gcalRoutes(app, db, cfg, now);
+  pushRoutes(app, db, cfg);
   return app;
 }

@@ -53,7 +53,7 @@ export function AddSheet({ preset, screen }: { preset: AddPreset; screen: Screen
 
   const save = () => {
     const s = useData.getState(), snap = s.snapshot(), id = uid();
-    const e = buildEntry({ type, id, title, day: dateJ, time: P.time, amount: P.amount, target, rawText: text, newIdeaLabel: t.newIdea });
+    const e = buildEntry({ type, id, title, day: dateJ, time: P.time, amount: P.amount, target, rawText: text, newIdeaLabel: t.newIdea, remind: useData.getState().settings.remindDefault });
     s.mutate(e.collection as 'items', ((l: unknown[]) => (e.prepend ? [e.record, ...l] : [...l, e.record])) as never);
     if (dest === 'calendar') cal.set({ day: dateJ, off: monthOffset(mode, T, dateJ), dir: 0 });
     ui.closeAdd(); ui.notify(t.savedTo + destName, { undo: snap, view: dest === screen ? null : dest });

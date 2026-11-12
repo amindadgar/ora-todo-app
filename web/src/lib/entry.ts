@@ -13,7 +13,7 @@ export const TYPE_IS_MONEY: EntryType[] = ['expense', 'income', 'bill', 'saving'
  * Turn an understood entry into the record that gets stored (and synced).
  * Pure: the caller supplies the id, the day and the localized "New idea" label.
  */
-export function buildEntry(o: { type: EntryType; id: string; title: string; day: Day; time: string | null; amount: number | null; target: string | null; rawText: string; newIdeaLabel: string }): BuiltEntry {
+export function buildEntry(o: { type: EntryType; id: string; title: string; day: Day; time: string | null; amount: number | null; target: string | null; rawText: string; newIdeaLabel: string; remind?: number }): BuiltEntry {
   const { type, id, title, day } = o;
   if (type === 'wish') return { collection: 'wishes', record: { id, title, meta: o.newIdeaLabel }, prepend: true };
   if (type === 'important') return { collection: 'events', record: { id, title, day, yearly: true }, prepend: false };
@@ -22,6 +22,6 @@ export function buildEntry(o: { type: EntryType; id: string; title: string; day:
   if (type === 'goal') return { collection: 'goals', record: { id, title, have: 0, target: +(o.target || 1), unit: '' }, prepend: false };
   return {
     collection: 'items', prepend: false,
-    record: { id, type, title, day, time: TYPE_HAS_TIME.includes(type) ? o.time || '' : '', ...(o.amount ? { amount: o.amount } : {}), ...(type === 'expense' ? { cat: categoryOf(o.rawText) } : {}) }
+    record: { id, type, title, day, time: TYPE_HAS_TIME.includes(type) ? o.time || '' : '', ...(TYPE_HAS_TIME.includes(type) && o.time && o.remind ? { remind: o.remind } : {}), ...(o.amount ? { amount: o.amount } : {}), ...(type === 'expense' ? { cat: categoryOf(o.rawText) } : {}) }
   };
 }

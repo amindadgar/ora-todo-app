@@ -21,3 +21,14 @@ describe('buildEntry', () => {
     const w = buildEntry({ ...base, type: 'wish' }); expect(w).toMatchObject({ collection: 'wishes', prepend: true, record: { meta: 'New idea' } });
   });
 });
+
+import { buildEntry as be } from '../src/lib/entry';
+describe('reminders on built entries', () => {
+  const base = { id: 'x', title: 'T', day: 1, amount: null, target: null, rawText: 'T', newIdeaLabel: 'n' };
+  it('adds the default lead time only to timed items', () => {
+    expect(be({ ...base, type: 'task', time: '16:00', remind: 10 }).record).toMatchObject({ remind: 10 });
+    expect(be({ ...base, type: 'task', time: null, remind: 10 }).record).not.toHaveProperty('remind');
+    expect(be({ ...base, type: 'task', time: '16:00', remind: 0 }).record).not.toHaveProperty('remind');
+    expect(be({ ...base, type: 'expense', time: '16:00', remind: 10 }).record).not.toHaveProperty('remind');
+  });
+});

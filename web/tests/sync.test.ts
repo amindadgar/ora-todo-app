@@ -15,6 +15,6 @@ describe('toRecords', () => {
   it('maps every collection to keyed records, activity by day, and syncs only shared settings', () => {
     const m = toRecords({ items: [{ id: 'a', type: 'task', title: 'x', day: 1, time: '' }], events: [], wishes: [], bills: [], savings: [], goals: [], activity: [{ day: 2461000, b: [1, 0, 0, 0] }], settings: { ...DEFAULT_SETTINGS, lang: 'en', theme: 'dark', currency: 'rial' } });
     expect([...m.keys()].sort()).toEqual([keyOf('activity', '2461000'), keyOf('items', 'a'), keyOf('settings', 'main')]);
-    expect(m.get('settings/main')!.data).toEqual({ currency: 'rial', calMode: null, showAlt: true, morning: true, evening: true });   // no lang/theme
+    expect(m.get('settings/main')!.data).toEqual({ currency: 'rial', calMode: null, showAlt: true, morning: true, evening: true, remindDefault: 10 });   // no lang/theme
   });
 });

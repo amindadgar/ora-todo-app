@@ -3,9 +3,9 @@ main = "src/index.ts"
 compatibility_date = "2025-09-01"
 workers_dev = true
 
-# Morning brief / evening review: the API says who is due; a 5-minute tick is plenty (windows are hours wide).
+# Morning brief / evening review (hours-wide windows) and meeting/task reminders (minute precision): tick every minute.
 [triggers]
-crons = ["*/5 * * * *"]
+crons = ["* * * * *"]
 
 [vars]
 # The api is reached through the public gateway (web service proxies /api/* to it). Change if your domain differs.

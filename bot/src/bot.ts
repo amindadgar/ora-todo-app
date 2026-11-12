@@ -158,6 +158,13 @@ export async function runDue(d: Deps): Promise<{ sent: number; failed: number }>
       else if (e instanceof OraError && e.status === 404) { /* unlinked meanwhile */ }
     }
   }
+  for (const r of await d.ora.reminders()) {
+    try { await d.tg.send(r.chatId, r.text); await d.ora.ackReminder(r.id); sent++; }
+    catch (e) {
+      failed++; console.error('reminder failed', e);
+      if (e instanceof TelegramError && e.blocked) { await d.ora.unlink(r.chatId).catch(() => {}); await d.ora.ackReminder(r.id).catch(() => {}); }
+    }
+  }
   return { sent, failed };
 }
 async function sendDue(due: Due, d: Deps) {

@@ -12,7 +12,7 @@ import type { Activity, Collections, Settings } from './types';
  */
 const LIST = ['items', 'events', 'wishes', 'bills', 'savings', 'goals'] as const;
 type ListKey = (typeof LIST)[number];
-const SETTING_KEYS = ['currency', 'calMode', 'showAlt', 'morning', 'evening'] as const;
+const SETTING_KEYS = ['currency', 'calMode', 'showAlt', 'morning', 'evening', 'remindDefault'] as const;
 type Rec = { collection: string; id: string; data: Record<string, unknown> };
 type Remote = Rec & { deleted: boolean; updatedAt: string };
 
