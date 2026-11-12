@@ -19,7 +19,6 @@ export function PushRow({ t, lang }: { t: Dict; lang: Lang }) {
     if (supported()) { const reg = await navigator.serviceWorker.getRegistration(); const sub = await reg?.pushManager.getSubscription(); setOn(!!sub && Notification.permission === 'granted'); }
   }, []);
   useEffect(() => { void refresh(); }, [refresh]);
-  if (!enabled) return null;
   const turnOn = async () => {
     setBusy(true); setMsg('');
     try {
@@ -40,9 +39,10 @@ export function PushRow({ t, lang }: { t: Dict; lang: Lang }) {
       <div className="row__body" style={{ minWidth: 0, gap: 'var(--space-2)' }}>
         <span className="t-label" style={{ fontWeight: 600 }}>{t.pushTitle}</span><span className="t-caption muted">{t.pushDesc}</span>
         {on && <span className="t-caption success" role="status">{t.gcalConnected}</span>}
+        {!enabled && <span className="t-caption muted" role="status">{t.notReady}</span>}
         {msg && <span className="t-caption danger" role="alert">{msg}</span>}
       </div>
-      <Button variant="secondary" size="sm" disabled={busy} onClick={() => void (on ? turnOff() : turnOn())}>{on ? t.pushOffBtn : t.pushOn}</Button>
+      <Button variant="secondary" size="sm" disabled={busy || !enabled} onClick={() => void (on ? turnOff() : turnOn())}>{on ? t.pushOffBtn : t.pushOn}</Button>
     </div>
   );
 }
@@ -57,17 +57,17 @@ export function GcalRow({ t, onResult }: { t: Dict; onResult?: (r: string | null
     setErr(m[1] === 'denied' ? t.gcalDenied : m[1] === 'failed' ? t.gcalFailed : ''); onResult?.(m[1]!); if (m[1] === 'ok') void useMeetings.getState().load();
     history.replaceState(null, '', '#/settings');
   }, [t, onResult]);
-  if (!st?.enabled) return null;
   const connect = async () => { setBusy(true); setErr(''); try { const r = await api<{ url: string }>('POST', '/v1/gcal/connect', {}); location.href = r.url; } catch { setErr(t.gcalFailed); setBusy(false); } };
   const disconnect = async () => { await api('DELETE', '/v1/gcal').catch(() => {}); useMeetings.getState().clear(); await load(); };
   return (
     <div className="row" style={{ padding: 'var(--space-12) 0', alignItems: 'flex-start' }} data-testid="gcal-row">
       <div className="row__body" style={{ minWidth: 0, gap: 'var(--space-2)' }}>
         <span className="t-label" style={{ fontWeight: 600 }}>{t.gcalTitle}</span><span className="t-caption muted">{t.gcalDesc}</span>
-        {st.linked && <span className="t-caption success" role="status">{t.gcalConnected}</span>}
+        {st && !st.enabled && <span className="t-caption muted" role="status">{t.notReady}</span>}
+        {st?.linked && <span className="t-caption success" role="status">{t.gcalConnected}</span>}
         {err && <span className="t-caption danger" role="alert">{err}</span>}
       </div>
-      {st.linked ? <Button variant="secondary" size="sm" onClick={() => void disconnect()}>{t.gcalDisconnect}</Button> : <Button variant="secondary" size="sm" disabled={busy} onClick={() => void connect()}>{t.gcalConnect}</Button>}
+      {st?.linked ? <Button variant="secondary" size="sm" onClick={() => void disconnect()}>{t.gcalDisconnect}</Button> : <Button variant="secondary" size="sm" disabled={busy || !st?.enabled} onClick={() => void connect()}>{t.gcalConnect}</Button>}
     </div>
   );
 }
