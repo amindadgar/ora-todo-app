@@ -58,15 +58,14 @@ export function SettingsScreen() {
           {!real && sw('fresh', t.previewNew, t.previewNewDesc, s.fresh, () => useData.getState().setFresh(!s.fresh))}
         </Card>
 
-        {real && tg.enabled && <>
+        {real && <div style={{ display: tg.enabled ? 'contents' : 'none' }}>
           {sec(t.secTelegram)}
           <Card as="div" className="list" aria-label={t.secTelegram}>
             <TelegramRow t={t} lang={s.lang} onStatus={setTg} />
             {tg.linked && sw('m', t.morningBrief, f.time('07:30') + ' · ' + t.morningDesc, s.morning, () => set({ morning: !s.morning }), t.telegramOnly)}
             {tg.linked && sw('e', t.eveningReview, f.time('22:00') + ' · ' + t.eveningDesc, s.evening, () => set({ evening: !s.evening }), t.telegramOnly)}
           </Card>
-        </>}
-        {real && !tg.enabled && <div hidden><TelegramRow t={t} lang={s.lang} onStatus={setTg} /></div>}
+        </div>}
 
         {real && <>
           {sec(t.secReminders)}

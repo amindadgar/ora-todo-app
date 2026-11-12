@@ -15,7 +15,7 @@ export function TelegramRow({ t, lang, onStatus }: { t: Dict; lang: Lang; onStat
     const i = setInterval(() => { if (Date.now() > stop) { clearInterval(i); setUrl(null); } else void load(); }, 3000); return () => clearInterval(i);
   }, [url, st?.linked, load]);
   useEffect(() => { if (st?.linked) setUrl(null); }, [st?.linked]);
-  useEffect(() => { onStatus?.({ enabled: !!st?.enabled, linked: !!st?.linked }); }, [st?.enabled, st?.linked, onStatus]);
+  useEffect(() => { if (st) onStatus?.({ enabled: st.enabled, linked: st.linked }); }, [st, onStatus]);   // only once the server has answered
   if (!st?.enabled) return null;
 
   const connect = async () => {
