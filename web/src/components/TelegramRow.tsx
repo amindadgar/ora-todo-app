@@ -16,8 +16,6 @@ export function TelegramRow({ t, lang, onStatus }: { t: Dict; lang: Lang; onStat
   }, [url, st?.linked, load]);
   useEffect(() => { if (st?.linked) setUrl(null); }, [st?.linked]);
   useEffect(() => { if (st) onStatus?.({ enabled: st.enabled, linked: st.linked }); }, [st, onStatus]);   // only once the server has answered
-  if (!st?.enabled) return null;
-
   const connect = async () => {
     setBusy(true); setErr(false);
     try { const r = await api<{ url: string }>('POST', '/v1/telegram/link-code', { lang, tz: Intl.DateTimeFormat().resolvedOptions().timeZone }); setUrl(r.url); window.open(r.url, '_blank', 'noopener'); }
@@ -29,12 +27,13 @@ export function TelegramRow({ t, lang, onStatus }: { t: Dict; lang: Lang; onStat
       <div className="row__body" style={{ minWidth: 0, gap: 'var(--space-2)' }}>
         <span className="t-label" style={{ fontWeight: 600 }}>{t.telegram}</span>
         <span className="t-caption muted">{t.telegramDesc}</span>
-        {st.linked && <span className="t-caption success" role="status" data-testid="telegram-status">{t.telegramConnected}</span>}
-        {!st.linked && url && <><a className="t-caption brand" href={url} target="_blank" rel="noopener">{t.openTelegram}</a><span className="t-caption muted" role="status">{t.waitingTelegram}</span></>}
+        {st && !st.enabled && <span className="t-caption muted" role="status">{t.telegramOff}</span>}
+        {st?.linked && <span className="t-caption success" role="status" data-testid="telegram-status">{t.telegramConnected}</span>}
+        {!st?.linked && url && <><a className="t-caption brand" href={url} target="_blank" rel="noopener">{t.openTelegram}</a><span className="t-caption muted" role="status">{t.waitingTelegram}</span></>}
         {err && <span className="t-caption danger" role="alert">{t.telegramFailed}</span>}
       </div>
-      {st.linked ? <Button variant="secondary" size="sm" onClick={() => void disconnect()}>{t.disconnect}</Button>
-        : <Button variant="secondary" size="sm" disabled={busy} onClick={() => void connect()}>{t.connectTelegram}</Button>}
+      {st?.linked ? <Button variant="secondary" size="sm" onClick={() => void disconnect()}>{t.disconnect}</Button>
+        : <Button variant="secondary" size="sm" disabled={busy || !st?.enabled} onClick={() => void connect()}>{t.connectTelegram}</Button>}
     </div>
   );
 }
