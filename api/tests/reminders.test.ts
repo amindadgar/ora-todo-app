@@ -48,13 +48,13 @@ describe('reminders', () => {
     const { cl } = await userWithPush();
     const t = '2026-10-06T10:00:00Z';                                                 // 13:30 in Tehran
     await cl.post('/v1/sync', { changes: [change('i1', { id: 'i1', type: 'event', title: 'Standup', day: day(2026, 10, 6), time: '13:40', remind: 10 }, t)] });
-    const send = vi.fn(async () => {});
+    const send = vi.fn(async (_s: unknown, _p: string) => {});
     expect((await runReminders(c.db, c.cfg, new Date('2026-10-06T10:00:00Z'), { send })).delivered).toBe(1);   // exactly 10 min before 13:40
     expect(send).toHaveBeenCalledTimes(1); expect(JSON.parse(send.mock.calls[0]![1] as string).body).toBe('In 10 min: Standup · 13:40');
     await runReminders(c.db, c.cfg, new Date('2026-10-06T10:01:00Z'), { send }); expect(send).toHaveBeenCalledTimes(1);   // not again
   });
   it('does nothing early, late, when done, or without `remind`', async () => {
-    const { cl } = await userWithPush(); const send = vi.fn(async () => {}); const t = '2026-10-06T09:00:00Z';
+    const { cl } = await userWithPush(); const send = vi.fn(async (_s: unknown, _p: string) => {}); const t = '2026-10-06T09:00:00Z';
     await cl.post('/v1/sync', { changes: [
       change('a', { id: 'a', type: 'task', title: 'A', day: day(2026, 10, 6), time: '14:00', remind: 15 }, t),
       change('b', { id: 'b', type: 'task', title: 'B', day: day(2026, 10, 6), time: '13:40', remind: 10, done: true }, t),
@@ -78,7 +78,7 @@ describe('reminders', () => {
   it('reminds about Google Calendar meetings with the default lead time and drops dead push endpoints', async () => {
     const { me } = await userWithPush();
     await c.db.query(`insert into gcal_links (user_id, refresh_enc, events_cache, fetched_at) values ($1, $2, $3, $4)`, [me, encrypt(c.cfg, 'r'), JSON.stringify([{ id: 'e1', title: 'Board meeting', start: '2026-10-06T10:08:00.000Z', end: '2026-10-06T10:38:00.000Z' }]), new Date('2026-10-06T10:00:00Z')]);
-    const send = vi.fn(async () => { throw Object.assign(new Error('gone'), { statusCode: 410 }); });
+    const send = vi.fn(async (_s: unknown, _p: string) => { throw Object.assign(new Error('gone'), { statusCode: 410 }); });
     await runReminders(c.db, c.cfg, new Date('2026-10-06T10:00:00Z'), { send });
     expect(send).toHaveBeenCalledTimes(1); expect((await c.db.query('select 1 from push_subscriptions')).rowCount).toBe(0);
   });

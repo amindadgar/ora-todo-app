@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0 — Google Calendar and reminders
+- api: read-only Google Calendar connection (OAuth code flow, refresh token AES-256-GCM encrypted, signed state), `/v1/gcal*`; Web Push (`/v1/push*`, VAPID); a minute scheduler that delivers reminders once (idempotent) to Web Push and to a Telegram outbox the Worker drains via `/bot/due`.
+- web: *Settings → Reminders & calendar* (default lead time, notifications on this device, Connect Google Calendar); meetings appear on Home and in the Calendar agenda/dots and are avoided by the free-time suggestion; per-task "Remind me" in the edit sheet; new timed tasks get the default reminder.
+- bot: sends queued reminders; cron is now every minute (redeploy the Worker).
+- New env on the api: `GOOGLE_CLIENT_SECRET`, `TOKEN_KEY`, `PUBLIC_URL`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`. Calendar needs the Calendar API enabled and the redirect URI `<PUBLIC_URL>/api/v1/gcal/callback`.
+
 ## 0.6.0 — redesign pass
 - Login: Google only, with three short value points; demo data is no longer offered on the login screen.
 - Settings: grouped into Account, Appearance, Telegram, About and a single red "Delete my account and data" card. Removed the backup export/import, "Clear my data" and the duplicate main-calendar option (the Calendar tabs control it). Morning/evening switches appear only when Telegram is linked, tagged "Telegram only".
