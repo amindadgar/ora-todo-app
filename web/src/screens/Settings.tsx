@@ -12,11 +12,10 @@ import { PageHeader } from '../components/Navigation';
 import { Segment, Toggle } from '../components/Selection';
 import { TextButton, Button } from '../components/Buttons';
 import { Card } from '../components/Cards';
-import { useCalMode } from './Home';
 import { revealTheme } from '../interactions/themeReveal';
 
 export function SettingsScreen() {
-  const f = useI18n(); const { t } = f; const ui = useUI(); const nav = useNav(); const mode = useCalMode();
+  const f = useI18n(); const { t } = f; const ui = useUI(); const nav = useNav();
   const { mode: authMode, user } = useAuth(); const real = authMode === 'google'; const sync = useSyncStatus();
   const [tg, setTg] = useState(false);
   const { settings: s, setSettings: set } = useData();  const row = (label: string, ctl: React.ReactNode, key: string) => <div key={key} className="row" style={{ justifyContent: 'space-between', padding: 'var(--space-10) 0' }}><span className="t-label" style={{ fontWeight: 400 }}>{label}</span>{ctl}</div>;
@@ -47,7 +46,6 @@ export function SettingsScreen() {
           <InstallRow t={t} />
           {real && <TelegramRow t={t} lang={s.lang} onLinked={setTg} />}
           {row(t.language, <Segment label={t.language} value={s.lang} options={[['fa', t.persian], ['en', t.english]]} onChange={(v) => set({ lang: v, calMode: null })} />, 'lang')}
-          {row(t.mainCalendar, <Segment label={t.mainCalendar} value={mode} options={[['j', t.jalali], ['g', t.gregorian]]} onChange={(v) => set({ calMode: v })} />, 'cal')}
           {row(t.theme, <Segment label={t.theme} value={s.theme} options={[['light', t.light], ['dark', t.dark], ['auto', t.auto]]}
             onChange={(v) => { const el = document.activeElement as HTMLElement; if (el && v !== 'auto' && v !== s.theme) revealTheme(el, () => set({ theme: v })); else set({ theme: v }); }} />, 'theme')}
           {row(t.currency, <Segment label={t.currency} value={s.currency} options={[['toman', t.toman], ['rial', t.rial]]} onChange={(v) => set({ currency: v })} />, 'cur')}
