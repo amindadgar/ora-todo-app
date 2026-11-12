@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0 — redesign pass
+- Login: Google only, with three short value points; demo data is no longer offered on the login screen.
+- Settings: grouped into Account, Appearance, Telegram, About and a single red "Delete my account and data" card. Removed the backup export/import, "Clear my data" and the duplicate main-calendar option (the Calendar tabs control it). Morning/evening switches appear only when Telegram is linked, tagged "Telegram only".
+- Home: the phone header now has an avatar that opens Settings (theme/language live in Settings).
+- Calendar: holiday fine print is a collapsible "About holiday dates".
+- Key dates: next date highlighted, grouped into This month / Later. Wishlist: "Plan it" is a primary button.
+- Goals and a new Insights screen (reports and the yearly review moved there).
+
 ## 0.5.0 — easy install to the home screen
 - Install banner on Home (touch devices), *Settings → Install Ora*, and a login-screen link; native prompt on Chromium, step-by-step guides for iOS, Android, desktop Safari and in-app browsers (EN/FA).
 - Richer manifest (id, scope, categories, any + maskable icons, "Add" shortcut), iOS home-screen icon and meta tags, correct manifest content type from the gateway.

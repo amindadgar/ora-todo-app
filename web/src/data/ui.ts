@@ -5,7 +5,7 @@ import type { EntryType } from '../lib/parser';
 import type { Day } from '../lib/calendar';
 import { motion } from '../tokens/tokens';
 
-export type Screen = 'home' | 'calendar' | 'money' | 'key-dates' | 'wishlist' | 'goals' | 'settings';
+export type Screen = 'home' | 'calendar' | 'money' | 'key-dates' | 'wishlist' | 'goals' | 'insights' | 'settings';
 export interface Toast { id: number; msg: string; undo?: (Collections & { fresh: boolean }) | null; view?: Screen | null }
 export type EditKind = 'items' | 'events' | 'bills' | 'goals' | 'wishes' | 'savings';
 export interface AddPreset { text?: string; type?: EntryType | null; day?: Day | null }

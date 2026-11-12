@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Screen } from './ui';
-const SCREENS: Screen[] = ['home', 'calendar', 'money', 'key-dates', 'wishlist', 'goals', 'settings'];
+const SCREENS: Screen[] = ['home', 'calendar', 'money', 'key-dates', 'wishlist', 'goals', 'insights', 'settings'];
 const read = (): Screen => { const h = location.hash.replace(/^#\/?/, '') as Screen; return SCREENS.includes(h) ? h : 'home'; };
 /** Hash router: back/forward buttons and deep links work on desktop; no server config needed. */
 let navCount = 0;

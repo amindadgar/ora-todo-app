@@ -5,7 +5,7 @@ import type { Dict, Lang } from '../i18n/dict';
 
 interface Status { enabled: boolean; linked: boolean }
 /** Settings row: link the Telegram bot to this account (hidden when the server has no bot configured). */
-export function TelegramRow({ t, lang, onLinked }: { t: Dict; lang: Lang; onLinked?: (v: boolean) => void }) {
+export function TelegramRow({ t, lang, onStatus }: { t: Dict; lang: Lang; onStatus?: (s: Status) => void }) {
   const [st, setSt] = useState<Status | null>(null); const [url, setUrl] = useState<string | null>(null); const [err, setErr] = useState(false); const [busy, setBusy] = useState(false);
   const load = useCallback(() => api<Status>('GET', '/v1/telegram').then(setSt).catch(() => setSt({ enabled: false, linked: false })), []);
   useEffect(() => { void load(); }, [load]);
@@ -15,7 +15,7 @@ export function TelegramRow({ t, lang, onLinked }: { t: Dict; lang: Lang; onLink
     const i = setInterval(() => { if (Date.now() > stop) { clearInterval(i); setUrl(null); } else void load(); }, 3000); return () => clearInterval(i);
   }, [url, st?.linked, load]);
   useEffect(() => { if (st?.linked) setUrl(null); }, [st?.linked]);
-  useEffect(() => { onLinked?.(!!st?.linked); }, [st?.linked, onLinked]);
+  useEffect(() => { onStatus?.({ enabled: !!st?.enabled, linked: !!st?.linked }); }, [st?.enabled, st?.linked, onStatus]);
   if (!st?.enabled) return null;
 
   const connect = async () => {

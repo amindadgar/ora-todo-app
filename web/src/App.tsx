@@ -14,6 +14,7 @@ import { EditSheet } from './screens/EditSheet';
 import { KeyDatesScreen } from './screens/KeyDates';
 import { WishlistScreen } from './screens/Wishlist';
 import { GoalsScreen } from './screens/Goals';
+import { InsightsScreen } from './screens/Insights';
 import { SettingsScreen } from './screens/Settings';
 import { useI18n, useDocumentSettings } from './i18n';
 import { TabBar, SideNav, type NavDef } from './components/Navigation';
@@ -66,6 +67,7 @@ export function App({ skipSplash }: { skipSplash?: boolean }) {
           {screen === 'key-dates' && <KeyDatesScreen />}
           {screen === 'wishlist' && <WishlistScreen />}
           {screen === 'goals' && <GoalsScreen />}
+          {screen === 'insights' && <InsightsScreen />}
           {screen === 'settings' && <SettingsScreen />}
         </div></div>
         <TabBar label={t.menuAria} items={tabs} active={active} bumped={ui.bump} onSelect={select} />

@@ -90,7 +90,7 @@ export function CalendarScreen() {
           </div>
         </div>
         {holidays.map((h, i) => <span key={i} className="t-caption danger">{h}</span>)}
-        <p className="t-overline muted" style={{ fontWeight: 400, letterSpacing: 0, lineHeight: 1.8 }}>{t.holidayNote}</p>
+        <details className="holidaynote"><summary className="t-caption muted" style={{ minHeight: 44, display: 'flex', alignItems: 'center', cursor: 'pointer' }}>ⓘ {t.holidayAbout}</summary><p className="t-caption muted" style={{ lineHeight: 1.8 }}>{t.holidayNote}</p></details>
       </div>
       <section className="screen screen--flush cal__agenda" aria-label={f.fullLabel(sel)}>
         <div className="cal__agenda-in">

@@ -1,16 +1,12 @@
-import { useState } from 'react';
 import { useData } from '../data/store';
 import { useUI } from '../data/ui';
 import { useNav } from '../data/nav';
-import { useAuth } from '../data/auth';
 import { useI18n } from '../i18n';
 import { today } from '../lib/calendar';
-import { buildReport, type Range } from '../lib/report';
+import { buildReport } from '../lib/report';
 import { PageHeader } from '../components/Navigation';
-import { GoalRow, ReviewCard } from '../components/Cards';
+import { GoalRow } from '../components/Cards';
 import { ListCard } from '../components/Lists';
-import { Tabs } from '../components/Selection';
-import { ChartBars } from '../components/Progress';
 import { TextButton } from '../components/Buttons';
 import { useCountUp } from '../interactions/useCountUp';
 import { buzz } from '../interactions/haptics';
@@ -18,19 +14,10 @@ import { usePlus } from './Money';
 import { useCalMode } from './Home';
 
 export function GoalsScreen() {
-  const f = useI18n(); const { t, N, text } = f; const ui = useUI(); const nav = useNav(); const mode = useCalMode(); const T = today(); const auth = useAuth((a) => a.mode);
-  const { goals, activity, settings, items } = useData(); const [range, setRange] = useState<Range>('week');
-  const cu = useCountUp('goals|' + range); const plus = usePlus();
-  const rep = buildReport(range, activity, T, mode); const max = Math.max(1, ...rep.bars.map((b) => b.value));
-  const label = (i: number, key: string) => range === 'day' ? [t.chart.am, t.chart.noon, t.chart.pm, t.chart.night][i] : range === 'week' ? t.weekdaysShort[i]
-    : range === 'month' ? t.chart.w + N(key) : (mode === 'j' ? t.jMonths : t.gMonths)[+key - 1].slice(0, 3);
-  const bars = rep.bars.map((b, i) => { const k = cu.k(i + 1); return { label: label(i, b.key), value: b.value ? N(Math.round(b.value * k)) : '', h: Math.max(3, Math.round((b.value / max) * 100 * k)), zero: !b.value }; });
-  const pct = (a: number, b: number) => f.percent(Math.round(Math.abs(a - b) / b * 100));
-  const note = rep.total === 0 ? t.chart.empty
-    : range === 'day' ? t.chart.todayDone(N(rep.total), N(Math.max(rep.total, items.filter((x) => x.day === T && (x.type === 'task' || x.type === 'event')).length)))
-    : range === 'week' ? (rep.bestIndex >= 0 ? t.chart.best(t.weekdaysLong[rep.bestIndex]) : '')
-    : range === 'month' ? (rep.prevTotal ? (rep.total >= rep.prevTotal ? t.chart.better(pct(rep.total, rep.prevTotal)) : t.chart.worse(pct(rep.total, rep.prevTotal))) : '')
-    : t.chart.tasksSoFar(N(rep.total));
+  const f = useI18n(); const { t, N, text } = f; const ui = useUI(); const nav = useNav(); const { go } = nav; const mode = useCalMode(); const T = today();
+  const { goals, activity } = useData();
+  const cu = useCountUp('goals|week'); const plus = usePlus();
+  const rep = buildReport('week', activity, T, mode);
   const plusOne = (id: string) => {
     const g = goals.find((x) => x.id === id)!; const complete = g.have + 1 >= g.target && g.have < g.target; buzz(8); plus.fire(id);
     useData.getState().mutate('goals', (l) => l.map((y) => (y.id === id ? { ...y, have: Math.min(y.target, y.have + 1) } : y)));
@@ -50,17 +37,10 @@ export function GoalsScreen() {
               onEdit={() => ui.openEdit('goals', g.id)} onPlus={() => plusOne(g.id)} />; })}</ListCard>}
           <TextButton style={{ alignSelf: 'flex-start' }} onClick={() => ui.openAdd({ type: 'goal' })}>{t.addGoal}</TextButton>
         </div>
-        <div className="goals__report">
-          <section className="stack" style={{ gap: 'var(--space-12)' }}>
-            <Tabs label={t.tasksCompleted} value={range} options={[['day', t.goalTabs.day], ['week', t.goalTabs.week], ['month', t.goalTabs.month], ['year', t.goalTabs.year]]} onChange={setRange} />
-            <div className="stack">
-              <span className="t-small" style={{ fontWeight: 600 }}>{t.tasksCompleted}</span>
-              <ChartBars bars={bars} />
-              <span className="t-caption muted">{note}</span>
-            </div>
-          </section>
-          {auth === 'guest' && !settings.fresh && <ReviewCard title={t.yearTitle} line={t.yearLine} stats={t.yearStats} />}
-        </div>
+        <button type="button" className="o-soft insightslink" onClick={() => go('insights')} data-testid="insights-link" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-12)', padding: 'var(--space-12) var(--space-14)', minHeight: 56, textAlign: 'start', width: '100%' }}>
+          <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}><b className="t-body">{t.weekDoneLine(N(rep.total))}</b>{rep.bestIndex >= 0 && <span className="t-caption on-soft">{t.chart.best(t.weekdaysLong[rep.bestIndex])}</span>}</span>
+          <b className="t-small brand">{t.insights} {f.fa ? '‹' : '›'}</b>
+        </button>
       </div>
     </main>
   );

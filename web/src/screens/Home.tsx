@@ -8,7 +8,7 @@ import { today, weekStart, weekdayIndex, toJ, toG, monthOffset, monthAt, isFrida
 import { nextFreeSlot, toHM } from '../lib/suggest';
 import { setDone, removeFrom, addSuggestion, shiftOneDay } from '../data/actions';
 import { Logo } from '../components/Brand';
-import { HeaderActions } from '../components/HeaderActions';
+import { initials } from '../lib/auth';
 import { WeekDay, CalendarDay } from '../components/Calendar';
 import { Card, FreeTimeCard } from '../components/Cards';
 import { ProgressBar } from '../components/Progress';
@@ -22,7 +22,7 @@ import type { Item } from '../data/types';
 
 export function useCalMode(): CalMode { const m = useData((s) => s.settings.calMode); const lang = useData((s) => s.settings.lang); return m ?? (lang === 'fa' ? 'j' : 'g'); }
 
-export function Home({ go }: { go: (s: 'calendar' | 'wishlist') => void }) {
+export function Home({ go }: { go: (s: 'calendar' | 'wishlist' | 'settings') => void }) {
   const f = useI18n(); const { t, N, L, text, SEP } = f;
   const { items, events, bills, wishes, settings } = useData();
   const ui = useUI(); const cal = useCal(); const mode = useCalMode(); const user = useAuth((a) => a.user);
@@ -85,7 +85,7 @@ export function Home({ go }: { go: (s: 'calendar' | 'wishlist') => void }) {
           <h1 className="t-subheading" style={{ fontWeight: 600, lineHeight: 1.5 }}>{user ? t.helloName(user.givenName) : t.hello}</h1>
           <span className="t-small muted">{todayLine}</span>
         </div>
-        <HeaderActions className="home__actions" />
+        <button type="button" className="avatar home__actions" aria-label={t.settings} onClick={() => go('settings')} style={{ border: 'none', cursor: 'pointer', font: 'inherit' }}>{user?.picture ? <img src={user.picture} alt="" referrerPolicy="no-referrer" /> : user ? initials(user.name) : 'D'}</button>
       </div>
 
       <div role="list" aria-label={t.thisWeek} className="weekstrip home__week">

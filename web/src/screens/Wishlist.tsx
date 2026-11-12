@@ -4,7 +4,7 @@ import { useNav } from '../data/nav';
 import { useI18n } from '../i18n';
 import { PageHeader } from '../components/Navigation';
 import { ListCard, ActionMenu, useActionMenu } from '../components/Lists';
-import { TextButton, IconButton } from '../components/Buttons';
+import { TextButton, IconButton, Button } from '../components/Buttons';
 import { rowActions } from './common';
 import type { Wish } from '../data/types';
 
@@ -15,7 +15,7 @@ function WishRow({ w }: { w: Wish }) {
       <button type="button" onClick={() => ui.openEdit('wishes', w.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', minHeight: 44, justifyContent: 'center' }}>
         <span className="t-body" style={{ fontWeight: 600 }}>{f.text(w.title)}</span><span className="t-caption muted">{f.text(w.meta)}</span>
       </button>
-      <TextButton small onClick={() => ui.openAdd({ text: f.text(w.title) + (f.fa ? ' جمعه' : ' Friday'), type: 'event' })}>{t.planIt}</TextButton>
+      <Button variant="primary" size="sm" onClick={() => ui.openAdd({ text: f.text(w.title) + (f.fa ? ' جمعه' : ' Friday'), type: 'event' })}>{t.planIt}</Button>
       <span className="taskrow__more"><IconButton icon="more2" kind="muted" label={t.more_} aria-haspopup="menu" onClick={(e) => am.openAtButton(e.currentTarget)} /></span>
       {am.menu && <ActionMenu actions={rowActions(t, 'wishes', w.id, ui.openEdit)} at={am.menu} onClose={am.close} />}
     </div>

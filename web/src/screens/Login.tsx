@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useAuth } from '../data/auth';
 import { useI18n } from '../i18n';
 import { Logo } from '../components/Brand';
+import { Icon } from '../components/Icon';
 import { GoogleButton } from '../components/GoogleButton';
 import { HeaderActions } from '../components/HeaderActions';
 import { Credits } from '../components/Credits';
@@ -21,6 +22,7 @@ export function Login() {
           <h1 id="login-h" className="t-title">{t.loginTitle}</h1>
           <p className="t-body muted" style={{ lineHeight: 1.7 }}>{t.loginSub}</p>
         </div>
+        <ul className="login__points">{t.loginPoints.map((p, i) => <li key={i} className="t-body"><span className="dot" aria-hidden="true"><Icon name={(['check', 'calendar', 'clock'] as const)[i]} size={18} stroke={2} /></span>{p}</li>)}</ul>
         <div className="stack" style={{ gap: 'var(--space-12)', alignItems: 'stretch' }}>
           <GoogleButton label={t.continueGoogle} setupHint={t.googleSetup} failedLabel={t.googleFailed} lang={lang} onCredential={onCredential} />
         </div>
